@@ -1,0 +1,16 @@
+{
+  "name": "GHome_project",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "@types/google-apps-script": "0.0.17",
+    "body-parser": "~1.9.2",
+    "express": "~4.9.8",
+    "google-auth-library": "^0.11.0",
+    "googleapis": "^22.2.0",
+    "oauth": "0.9.10",
+    "package.json": "^2.0.1"
+  }
+}
