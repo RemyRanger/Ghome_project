@@ -5,7 +5,7 @@ var googleAuth = require('google-auth-library');
 
 // If modifying these scopes, delete your previously saved credentials
 // at ~/.credentials/script-nodejs-quickstart.json
-var SCOPES = ['https://www.googleapis.com/auth/forms'];
+var SCOPES = ['https://www.googleapis.com/auth/forms', 'https://www.googleapis.com/auth/cloud-platform','https://www.googleapis.com/auth/drive', 'https://www.googleapis.com/auth/servicecontrol', 'https://www.googleapis.com/auth/service.management'];
 var TOKEN_DIR = (process.env.HOME || process.env.HOMEPATH ||
     process.env.USERPROFILE) + '/.credentials/';
 var TOKEN_PATH = TOKEN_DIR + 'script-nodejs-quickstart.json';
@@ -18,26 +18,75 @@ var app = express();
 
 app.use(bodyParser.json());
 
-app.post('/', function(req, response){
-  console.log(req.body.query);      // your JSON
-  var query = JSON.stringify(req.body.query);
+app.post('/getQuestions', function(req, response){
+  // your JSON
+  var query = req.body.query;
+  var questions = req.body.questions;
   console.log(query);
-  response.send(JSON.stringify(req.body));    // echo the result back
+  console.log(questions[1]);
+  app.set('questions', questions);
+  response.send('ok');
+});
 
-  // Load client secrets from a local file.
-  fs.readFile('client_secret.json', function processClientSecrets(err, content) {
-  if (err) {
-    console.log('Error loading client secret file: ' + err);
-    return;
+app.post('/', function(req, response){
+  // your JSON
+  var query = req.body.query;
+  console.log('From Google home:' + query);
+  var startForm = 'Remplir formulaire';
+  var oui = 'Oui';
+  var undef = 'undefined';
+  var questions = app.get('questions');
+  if ( startForm.localeCompare(query)==0) {
+	// Load client secrets from a local file.
+  	fs.readFile('client_secret.json', function processClientSecrets(err, content) {
+  		if (err) {
+    			console.log('Error loading client secret file: ' + err);
+    			return;
+  		}
+  		// Authorize a client with the loaded credentials, then call the
+  		// Google Apps Script Execution API.
+  		authorize(JSON.parse(content), callAppsScript, query);
+  	});
+	response.send('Récupération du formulaire, voulez-vous commencer ?');
+  } else if (query == oui) {
+	response.send(questions[0]);
+  } else if (!app.get('response0')) {
+	app.set('response0', query);
+	console.log(app.get('response0'));
+	response.send(questions[1]);
+  } else if (!app.get('response1')) {
+	app.set('response1', query);
+	console.log(app.get('response1'));
+	response.send(questions[2]);
+  } else if (!app.get('response2')) {
+	app.set('response2', query);
+	console.log(app.get('response2'));
+	response.send(questions[3]);
+  } else if (!app.get('response3')) {
+	app.set('response3', query);
+	console.log(app.get('response3'));
+
+	// Load client secrets from a local file.
+  	fs.readFile('client_secret.json', function processClientSecrets(err, content) {
+  		if (err) {
+    			console.log('Error loading client secret file: ' + err);
+    			return;
+  		}
+  		// Authorize a client with the loaded credentials, then call the
+  		// Google Apps Script Execution API.
+		var myrep = [ app.get('response0'), app.get('response1'), app.get('response2'), query];
+  		authorize(JSON.parse(content), postFormulaire, myrep);
+  	});
+	response.send('Formulaire terminé, vos réponses ont été soumises.');
   }
-  // Authorize a client with the loaded credentials, then call the
-  // Google Apps Script Execution API.
-  authorize(JSON.parse(content), callAppsScript, query);
-  });
 });
 
 app.listen(8080);
 
+
+function setResponse(num, response) {
+  app.set('reponse'+num, response);
+}
 
 /**
  * Create an OAuth2 client with the given credentials, and then execute the
@@ -120,7 +169,7 @@ function storeToken(token) {
  * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
  */
 function callAppsScript(auth, query) {
-  var scriptId = '1OYVUtS-wuG7Ll867c_dp41N-ovz7Iwmvwnwx8gEFDM7WaE3F-eBpkj4k';
+  var scriptId = 'MlqP88mVwRc4mfM1tPjxQbrd8qV20u4Vz';
   var script = google.script('v1');
   var input = query;
 
@@ -128,7 +177,7 @@ function callAppsScript(auth, query) {
   script.scripts.run({
     auth: auth,
     resource: {
-      function: 'getFoldersUnderRoot',
+      function: 'getQuestions',
       parameters: [input],
     },
     scriptId: scriptId
@@ -160,8 +209,50 @@ function callAppsScript(auth, query) {
       // function returns. Here, the function returns an Apps Script Object
       // with String keys and values, and so the result is treated as a
       // Node.js object (folderSet).
-      var folderSet = resp.response.result;
-      console.log('Done');
+      var folderSet = resp.response.result.questions;
+      console.log(folderSet);
+      app.set('questions', resp.response.result.questions);
+    }
+
+  });
+}
+
+function postFormulaire(auth, query) {
+  var scriptId = 'MlqP88mVwRc4mfM1tPjxQbrd8qV20u4Vz';
+  var script = google.script('v1');
+  var input = query;
+
+  // Make the API request. The request object is included here as 'resource'.
+  script.scripts.run({
+    auth: auth,
+    resource: {
+      function: 'postForm',
+      parameters: [input],
+    },
+    scriptId: scriptId
+  }, function(err, resp) {
+    if (err) {
+      // The API encountered a problem before the script started executing.
+      console.log('The API returned an error: ' + err);
+      return;
+    }
+    if (resp.error) {
+      // The API executed, but the script returned an error.
+
+      // Extract the first (and only) set of error details. The values of this
+      // object are the script's 'errorMessage' and 'errorType', and an array
+      // of stack trace elements.
+      var error = resp.error.details[0];
+      console.log('Script error message: ' + error.errorMessage);
+      console.log('Script error stacktrace:');
+
+      if (error.scriptStackTraceElements) {
+        // There may not be a stacktrace if the script didn't start executing.
+        for (var i = 0; i < error.scriptStackTraceElements.length; i++) {
+          var trace = error.scriptStackTraceElements[i];
+          console.log('\t%s: %s', trace.function, trace.lineNumber);
+        }
+      }
     }
 
   });
