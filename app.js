@@ -30,10 +30,11 @@ app.post('/', function(req, response){
   var body = req.body.result.parameters;
   console.log('From Google home:' + body);
   response.setHeader('Content-Type', 'application/json');
-  var startForm = 'Remplir formulaire';
-  var oui = 'Oui';
+  var startForm = 'remplir formulaire';
+  var oui = 'oui';
   var undef = 'undefined';
   var questions = app.get('questions');
+  console.log(questions);
   if ( startForm.localeCompare(query)==0) {
 	// Load client secrets from a local file.
   	fs.readFile('client_secret.json', function processClientSecrets(err, content) {
@@ -45,21 +46,25 @@ app.post('/', function(req, response){
   		// Google Apps Script Execution API.
   		authorize(JSON.parse(content), callAppsScript, query);
   	});
-	response.send(JSON.parse('{ "speech": "Yo mon frere", "displayText": "yo mon frere" }'));
+	response.send(JSON.parse('{ "speech": "Le formulaire a été chargé, souhaitez-vous le remplir ?", "displayText": "Souhaitez-vous remplir le formualire ?"}'));
   } else if (query == oui) {
-	response.send(questions[0]);
+	var rep = questions[0];
+	response.send(JSON.parse('{ "speech": "' + rep + '", "displayText": "' + rep + '"}'));
   } else if (!app.get('response0')) {
 	app.set('response0', query);
 	console.log(app.get('response0'));
-	response.send(questions[1]);
+	var rep = questions[1];
+        response.send(JSON.parse('{ "speech": "' + rep + '", "displayText": "' + rep + '"}'));
   } else if (!app.get('response1')) {
 	app.set('response1', query);
 	console.log(app.get('response1'));
-	response.send(questions[2]);
+	var rep = questions[2];
+        response.send(JSON.parse('{ "speech": "' + rep + '", "displayText": "' + rep + '"}'));
   } else if (!app.get('response2')) {
 	app.set('response2', query);
 	console.log(app.get('response2'));
-	response.send(questions[3]);
+	var rep = questions[3];
+        response.send(JSON.parse('{ "speech": "' + rep + '", "displayText": "' + rep + '"}'));
   } else if (!app.get('response3')) {
 	app.set('response3', query);
 	console.log(app.get('response3'));
@@ -75,12 +80,14 @@ app.post('/', function(req, response){
 		var myrep = [ app.get('response0'), app.get('response1'), app.get('response2'), query];
   		authorize(JSON.parse(content), postFormulaire, myrep);
   	});
-	response.send('Formulaire terminé, vos réponses ont été soumises.');
+	response.send(JSON.parse('{ "speech": "Formulaire terminé", "displayText": "formualire terminé"}'));
   }
 });
 
-var port = 443;
+var port = 80;
+app.listen(port);
 
+/*
 const httpsOptions = {
   key: fs.readFileSync('./key.pem'),
   cert: fs.readFileSync('./cert.pem')
@@ -91,7 +98,7 @@ const server = https.createServer(httpsOptions, app).listen(port, () => {
 
 function setResponse(num, response) {
   app.set('reponse'+num, response);
-}
+}*/
 
 /**
  * Create an OAuth2 client with the given credentials, and then execute the
