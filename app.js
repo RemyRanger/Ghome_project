@@ -46,7 +46,7 @@ app.post('/', function(req, response) {
     if (query == oui) {
         var rep = questions[0];
         console.log('passage');
-        response.send(JSON.parse('{ "speech": "' + rep + '", "displayText": "' + rep + '"}'));
+        sendResponse(response, rep)
     } else if (!app.get('response0')) {
         if (checkOuiNon(questions[0], query) == false) {
           response.send(JSON.parse('{ "speech": "Votre réponse doit contenire un oui ou un non, veuillez reformuler.", "displayText": "Votre réponse doit contenire un oui ou un non, veuillez reformuler."}'));
@@ -54,7 +54,7 @@ app.post('/', function(req, response) {
           app.set('response0', query);
           console.log(app.get('response0'));
           var rep = questions[1];
-          response.send(JSON.parse('{ "speech": "' + rep + '", "displayText": "' + rep + '"}'));
+          sendResponse(response, rep)
         }
     } else if (!app.get('response1')) {
       if (checkOuiNon(questions[1], query) == false) {
@@ -63,16 +63,16 @@ app.post('/', function(req, response) {
         app.set('response1', query);
         console.log(app.get('response1'));
         var rep = questions[2];
-        response.send(JSON.parse('{ "speech": "' + rep + '", "displayText": "' + rep + '"}'));
+        sendResponse(response, rep)
       }
     } else if (!app.get('response2')) {
-      if (checkOuiNon(questions[1], query) == false) {
+      if (checkOuiNon(questions[2], query) == false) {
         response.send(JSON.parse('{ "speech": "Votre réponse doit contenire un oui ou un non, veuillez reformuler.", "displayText": "Votre réponse doit contenire un oui ou un non, veuillez reformuler."}'));
       } else {
         app.set('response2', query);
         console.log(app.get('response2'));
         var rep = questions[3];
-        response.send(JSON.parse('{ "speech": "' + rep + '", "displayText": "' + rep + '"}'));
+        sendResponse(response, rep)
       }
     } else if (!app.get('response3')) {
         app.set('response3', query);
@@ -95,6 +95,14 @@ app.post('/', function(req, response) {
 
 var port = 80;
 app.listen(port);
+
+function sendResponse(response, question) {
+    if (~question.indexOf("[F]")) {
+      question.slice(3,0);
+      response.send(JSON.parse('{ "speech": "' + question + '", "displayText": "' + question + '"}'));
+    }
+    response.send(JSON.parse('{ "speech": "' + question + '", "displayText": "' + question + '"}'));
+}
 
 function checkOuiNon(question, reponse) {
     if (~question.indexOf("[F]")) {
