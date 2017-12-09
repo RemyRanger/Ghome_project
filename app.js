@@ -39,12 +39,7 @@ app.post('/', function(req, response) {
             }
             // Authorize a client with the loaded credentials, then call the
             // Google Apps Script Execution API.
-            authorize(JSON.parse(content), callAppsScript, query, function processFirstResponse() {
-              questions = app.get('questions');
-              var rep = questions[0];
-              console.log('passage')
-              response.send(JSON.parse('{ "speech": "' + rep + '", "displayText": "' + rep + '"}'));
-            });
+            authorize(JSON.parse(content), callAppsScript, query, response);
         });
     } else if (!app.get('response0')) {
         app.set('response0', query);
@@ -74,16 +69,15 @@ app.post('/', function(req, response) {
             // Authorize a client with the loaded credentials, then call the
             // Google Apps Script Execution API.
             var myrep = [app.get('response0'), app.get('response1'), app.get('response2'), query];
-            authorize(JSON.parse(content), postFormulaire, myrep);
+            authorize(JSON.parse(content), postFormulaire, myrep, response);
         });
-        response.send(JSON.parse('{ "speech": "Formulaire terminé", "displayText": "formualire terminé"}'));
     }
 });
 
 var port = 80;
 app.listen(port);
 
-function authorize(credentials, callback, query) {
+function authorize(credentials, callback, query, response) {
     var clientSecret = credentials.installed.client_secret;
     var clientId = credentials.installed.client_id;
     var redirectUrl = credentials.installed.redirect_uris[0];
@@ -93,15 +87,15 @@ function authorize(credentials, callback, query) {
     // Check if we have previously stored a token.
     fs.readFile(TOKEN_PATH, function(err, token) {
         if (err) {
-            getNewToken(oauth2Client, callback, query);
+            getNewToken(oauth2Client, callback, query, response);
         } else {
             oauth2Client.credentials = JSON.parse(token);
-            callback(oauth2Client, query);
+            callback(oauth2Client, query, response);
         }
     });
 }
 
-function getNewToken(oauth2Client, callback, query) {
+function getNewToken(oauth2Client, callback, query, response) {
     var authUrl = oauth2Client.generateAuthUrl({
         access_type: 'offline',
         scope: SCOPES
@@ -120,7 +114,7 @@ function getNewToken(oauth2Client, callback, query) {
             }
             oauth2Client.credentials = token;
             storeToken(token);
-            callback(oauth2Client, query);
+            callback(oauth2Client, query, response);
         });
     });
 }
@@ -137,7 +131,7 @@ function storeToken(token) {
     console.log('Token stored to ' + TOKEN_PATH);
 }
 
-function callAppsScript(auth, query) {
+function callAppsScript(auth, query, response) {
     var scriptId = 'MlqP88mVwRc4mfM1tPjxQbrd8qV20u4Vz';
     var script = google.script('v1');
     var input = query;
@@ -171,12 +165,15 @@ function callAppsScript(auth, query) {
         } else {
             var folderSet = resp.response.result.questions;
             app.set('questions', resp.response.result.questions);
+            var rep = resp.response.result.questions[0];
+            console.log('passage');
+            response.send(JSON.parse('{ "speech": "' + rep + '", "displayText": "' + rep + '"}'));
         }
 
     });
 }
 
-function postFormulaire(auth, query) {
+function postFormulaire(auth, query, response) {
     var scriptId = 'MlqP88mVwRc4mfM1tPjxQbrd8qV20u4Vz';
     var script = google.script('v1');
     var input = query;
@@ -210,4 +207,5 @@ function postFormulaire(auth, query) {
         }
 
     });
+    response.send(JSON.parse('{ "speech": "Formulaire terminé", "displayText": "formualire terminé"}'));
 }
