@@ -48,20 +48,32 @@ app.post('/', function(req, response) {
         console.log('passage');
         response.send(JSON.parse('{ "speech": "' + rep + '", "displayText": "' + rep + '"}'));
     } else if (!app.get('response0')) {
-        app.set('response0', query);
-        console.log(app.get('response0'));
-        var rep = questions[1];
-        response.send(JSON.parse('{ "speech": "' + rep + '", "displayText": "' + rep + '"}'));
+        if (checkOuiNon(questions[0], query) == false) {
+          response.send(JSON.parse('{ "speech": "Votre réponse doit contenire un oui ou un non, veuillez reformuler.", "displayText": "Votre réponse doit contenire un oui ou un non, veuillez reformuler."}'));
+        } else {
+          app.set('response0', query);
+          console.log(app.get('response0'));
+          var rep = questions[1];
+          response.send(JSON.parse('{ "speech": "' + rep + '", "displayText": "' + rep + '"}'));
+        }
     } else if (!app.get('response1')) {
+      if (checkOuiNon(questions[1], query) == false) {
+        response.send(JSON.parse('{ "speech": "Votre réponse doit contenire un oui ou un non, veuillez reformuler.", "displayText": "Votre réponse doit contenire un oui ou un non, veuillez reformuler."}'));
+      } else {
         app.set('response1', query);
         console.log(app.get('response1'));
         var rep = questions[2];
         response.send(JSON.parse('{ "speech": "' + rep + '", "displayText": "' + rep + '"}'));
+      }
     } else if (!app.get('response2')) {
+      if (checkOuiNon(questions[1], query) == false) {
+        response.send(JSON.parse('{ "speech": "Votre réponse doit contenire un oui ou un non, veuillez reformuler.", "displayText": "Votre réponse doit contenire un oui ou un non, veuillez reformuler."}'));
+      } else {
         app.set('response2', query);
         console.log(app.get('response2'));
         var rep = questions[3];
         response.send(JSON.parse('{ "speech": "' + rep + '", "displayText": "' + rep + '"}'));
+      }
     } else if (!app.get('response3')) {
         app.set('response3', query);
         console.log(app.get('response3'));
@@ -83,6 +95,16 @@ app.post('/', function(req, response) {
 
 var port = 80;
 app.listen(port);
+
+function checkOuiNon(question, reponse) {
+    if (~question.indexOf("[F]")) {
+      if (~reponse.indexOf("oui") || ~reponse.indexOf("non")) {
+        return true;
+      }
+      return false;
+    }
+    return true;
+}
 
 function authorize(credentials, callback, query) {
     var clientSecret = credentials.installed.client_secret;
