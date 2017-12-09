@@ -19,6 +19,18 @@ var app = express();
 //USE JSON FORMAT
 app.use(bodyParser.json());
 
+//GET Formulaire
+fs.readFile('client_secret.json', function processClientSecrets(err, content) {
+    var query = 'nothing';
+    if (err) {
+        console.log('Error loading client secret file: ' + err);
+        return;
+    }
+    // Authorize a client with the loaded credentials, then call the
+    // Google Apps Script Execution API.
+    authorize(JSON.parse(content), callAppsScript, query);
+});
+
 app.post('/', function(req, response) {
     //GET MSG FROM GHOME
     var query = req.body.result.parameters.msg;
@@ -32,15 +44,9 @@ app.post('/', function(req, response) {
     var questions = app.get('questions');
     //START DISCUSSION
     if (query == oui) {
-        fs.readFile('client_secret.json', function processClientSecrets(err, content) {
-            if (err) {
-                console.log('Error loading client secret file: ' + err);
-                return;
-            }
-            // Authorize a client with the loaded credentials, then call the
-            // Google Apps Script Execution API.
-            authorize(JSON.parse(content), callAppsScript, query, response);
-        });
+        var rep = questions[0];
+        console.log('passage');
+        response.send(JSON.parse('{ "speech": "' + rep + '", "displayText": "' + rep + '"}'));
     } else if (!app.get('response0')) {
         app.set('response0', query);
         console.log(app.get('response0'));
@@ -69,15 +75,16 @@ app.post('/', function(req, response) {
             // Authorize a client with the loaded credentials, then call the
             // Google Apps Script Execution API.
             var myrep = [app.get('response0'), app.get('response1'), app.get('response2'), query];
-            authorize(JSON.parse(content), postFormulaire, myrep, response);
+            authorize(JSON.parse(content), postFormulaire, myrep);
         });
+        response.send(JSON.parse('{ "speech": "Formulaire terminé", "displayText": "formualire terminé"}'));
     }
 });
 
 var port = 80;
 app.listen(port);
 
-function authorize(credentials, callback, query, response) {
+function authorize(credentials, callback, query) {
     var clientSecret = credentials.installed.client_secret;
     var clientId = credentials.installed.client_id;
     var redirectUrl = credentials.installed.redirect_uris[0];
@@ -87,15 +94,15 @@ function authorize(credentials, callback, query, response) {
     // Check if we have previously stored a token.
     fs.readFile(TOKEN_PATH, function(err, token) {
         if (err) {
-            getNewToken(oauth2Client, callback, query, response);
+            getNewToken(oauth2Client, callback, query);
         } else {
             oauth2Client.credentials = JSON.parse(token);
-            callback(oauth2Client, query, response);
+            callback(oauth2Client, query);
         }
     });
 }
 
-function getNewToken(oauth2Client, callback, query, response) {
+function getNewToken(oauth2Client, callback, query) {
     var authUrl = oauth2Client.generateAuthUrl({
         access_type: 'offline',
         scope: SCOPES
@@ -114,7 +121,7 @@ function getNewToken(oauth2Client, callback, query, response) {
             }
             oauth2Client.credentials = token;
             storeToken(token);
-            callback(oauth2Client, query, response);
+            callback(oauth2Client, query);
         });
     });
 }
@@ -131,7 +138,7 @@ function storeToken(token) {
     console.log('Token stored to ' + TOKEN_PATH);
 }
 
-function callAppsScript(auth, query, response) {
+function callAppsScript(auth, query) {
     var scriptId = 'MlqP88mVwRc4mfM1tPjxQbrd8qV20u4Vz';
     var script = google.script('v1');
     var input = query;
@@ -165,15 +172,12 @@ function callAppsScript(auth, query, response) {
         } else {
             var folderSet = resp.response.result.questions;
             app.set('questions', resp.response.result.questions);
-            var rep = resp.response.result.questions[0];
-            console.log('passage');
-            response.send(JSON.parse('{ "speech": "' + rep + '", "displayText": "' + rep + '"}'));
         }
 
     });
 }
 
-function postFormulaire(auth, query, response) {
+function postFormulaire(auth, query) {
     var scriptId = 'MlqP88mVwRc4mfM1tPjxQbrd8qV20u4Vz';
     var script = google.script('v1');
     var input = query;
@@ -207,5 +211,4 @@ function postFormulaire(auth, query, response) {
         }
 
     });
-    response.send(JSON.parse('{ "speech": "Formulaire terminé", "displayText": "formualire terminé"}'));
 }
