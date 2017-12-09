@@ -43,7 +43,7 @@ app.post('/', function(req, response) {
     var undef = 'undefined';
     var questions = app.get('questions');
     //START DISCUSSION
-    if (query == oui) {
+    if (query == oui && !app.get('response0')) {
         var rep = questions[0];
         console.log('passage');
         sendResponse(response, rep)
@@ -98,7 +98,7 @@ app.listen(port);
 
 function sendResponse(response, question) {
     if (~question.indexOf("[F]")) {
-      question.slice(3,0);
+      question = question.substring(3);
       response.send(JSON.parse('{ "speech": "' + question + '", "displayText": "' + question + '"}'));
     }
     response.send(JSON.parse('{ "speech": "' + question + '", "displayText": "' + question + '"}'));
