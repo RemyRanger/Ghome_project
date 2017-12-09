@@ -39,10 +39,12 @@ app.post('/', function(req, response) {
             }
             // Authorize a client with the loaded credentials, then call the
             // Google Apps Script Execution API.
-            authorize(JSON.parse(content), callAppsScript, query);
+            authorize(JSON.parse(content), callAppsScript, query, function processFirstResponse() {
+              var questions = app.get('questions');
+              var rep = questions[0];
+              response.send(JSON.parse('{ "speech": "' + rep + '", "displayText": "' + rep + '"}'));
+            });
         });
-        var rep = questions[0];
-        response.send(JSON.parse('{ "speech": "' + rep + '", "displayText": "' + rep + '"}'));
     } else if (!app.get('response0')) {
         app.set('response0', query);
         console.log(app.get('response0'));
