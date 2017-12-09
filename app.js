@@ -40,8 +40,9 @@ app.post('/', function(req, response) {
             // Authorize a client with the loaded credentials, then call the
             // Google Apps Script Execution API.
             authorize(JSON.parse(content), callAppsScript, query, function processFirstResponse() {
-              var questions = app.get('questions');
+              questions = app.get('questions');
               var rep = questions[0];
+              console.log('passage')
               response.send(JSON.parse('{ "speech": "' + rep + '", "displayText": "' + rep + '"}'));
             });
         });
@@ -169,7 +170,6 @@ function callAppsScript(auth, query) {
             }
         } else {
             var folderSet = resp.response.result.questions;
-            console.log(folderSet);
             app.set('questions', resp.response.result.questions);
         }
 
