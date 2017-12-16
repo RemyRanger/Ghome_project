@@ -89,7 +89,7 @@ app.post('/', function(req, response) {
             var myrep = [app.get('response0'), app.get('response1'), app.get('response2'), query];
             authorize(JSON.parse(content), postFormulaire, myrep);
         });
-        response.send(JSON.parse('{ "speech": "Formulaire terminé", "displayText": "formualire terminé"}'));
+        response.send(JSON.parse('{ "speech": "Formulaire terminé", "displayText": "formualire terminé", "data": { "google": {"expect_user_response": false}}}'));
     }
 });
 
