@@ -50,11 +50,15 @@ app.post('/api', function(req, response) {
     } else if (~query.indexOf("remplir") && ~query.indexOf("formulaire")) { //CASE OF DISCUSSION
       app.set('formulaire', '1');
       var rep = questions[0];
-      response.send(JSON.parse('{ "speech": "Très bien ! J\'ai récupéré le formulaire de test, nous allons commencer. '+ rep +'" , "displayText": "Aujourd\'hui, vous avez fait 5768 pas."}'));
+      response.send(JSON.parse('{ "speech": "Très bien ! J\'ai récupéré le formulaire de test, nous allons commencer. '+ rep +'" , "displayText": "Très bien ! J\'ai récupéré le formulaire de test, nous allons commencer. '+ rep +'"}'));
     } else if (~query.indexOf("nombre") && ~query.indexOf("pas")) { //CASE OF DISCUSSION
       response.send(JSON.parse('{ "speech": "D\'après les informations récupérées. Aujourd\'hui, vous avez fait 5768 pas. Comment puis-je vous aider maintenant ?", "displayText": "Aujourd\'hui, vous avez fait 5768 pas."}'));
     } else if (~query.indexOf("emploi") && ~query.indexOf("temps")) { //CASE OF DISCUSSION
       response.send(JSON.parse('{ "speech": "D\'après les informations récupérées. Aujourd\'hui, vous avez un cours à 14 heure avec Monsieur Consel. Que souhaitez-vous maintenant ?", "displayText": "Aujourd\'hui, vous avez un cours à 14 heure avec Monsieur Consel."}'));
+    } else if (~query.indexOf("merci")) { //CASE OF DISCUSSION
+      response.send(JSON.parse('{ "speech": "Je suis ravi de vous avoir aidé. Avez vous d\'autres questions ?", "displayText": "Je suis ravi de vous avoir aidé. Avez vous d\'autres questions ?"}'));
+    } else if (~query.indexOf("quit") || ~query.indexOf("termin")) { //CASE OF DISCUSSION
+      response.send(JSON.parse('{ "speech": "Je vous souhaite une agréable journé !", "displayText": "Je vous souhaite une agréable journé !", "data": { "google": {"expect_user_response": false}}}'));
     } else {
       response.send(JSON.parse('{ "speech": "Je n\'ai pas compris. Pouvez vous reformuler votre demande ?", "displayText": "Je n\'ai pas compris. Pouvez vous reformuler votre demande ?"}'));
     }
@@ -92,7 +96,7 @@ function processForm(query, response) {
       for (var j = 0; j < questions.length; j++) {
         app.set('response'+j, '0');
       }
-      response.send(JSON.parse('{ "speech": "Formulaire terminé", "displayText": "formualire terminé" }'));
+      response.send(JSON.parse('{ "speech": "Formulaire terminé. Que souhaitez vous faire maintenant ?", "displayText": "formualire terminé" }'));
     } else if (app.get('response'+k)=='0') {
       if (checkOuiNon(questions[k], query) == false) {
         response.send(JSON.parse('{ "speech": "Votre réponse doit contenire un oui ou un non, veuillez reformuler.", "displayText": "Votre réponse doit contenire un oui ou un non, veuillez reformuler."}'));
