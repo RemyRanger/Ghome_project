@@ -68,36 +68,19 @@ function processForm(query, response) {
   var questions = app.get('questions');
 
   //START DISCUSSION
-  if (app.get('response0')=='0') {
-      if (checkOuiNon(questions[0], query) == false) {
+  for (var k = 0; k < questions.length; k++) {
+    if (app.get('response'+k)=='0') {
+      if (checkOuiNon(questions[k], query) == false) {
         response.send(JSON.parse('{ "speech": "Votre réponse doit contenire un oui ou un non, veuillez reformuler.", "displayText": "Votre réponse doit contenire un oui ou un non, veuillez reformuler."}'));
       } else {
-        app.set('response0', query);
-        console.log(app.get('response0'));
-        var rep = questions[1];
+        app.set('response'+k, query);
+        console.log(app.get('response'+k));
+        var rep = questions[k+1];
         sendResponse(response, rep);
       }
-  } else if (app.get('response1')=='0') {
-    if (checkOuiNon(questions[1], query) == false) {
-      response.send(JSON.parse('{ "speech": "Votre réponse doit contenire un oui ou un non, veuillez reformuler.", "displayText": "Votre réponse doit contenire un oui ou un non, veuillez reformuler."}'));
-    } else {
-      app.set('response1', query);
-      console.log(app.get('response1'));
-      var rep = questions[2];
-      sendResponse(response, rep);
-    }
-  } else if (app.get('response2')=='0') {
-    if (checkOuiNon(questions[2], query) == false) {
-      response.send(JSON.parse('{ "speech": "Votre réponse doit contenire un oui ou un non, veuillez reformuler.", "displayText": "Votre réponse doit contenire un oui ou un non, veuillez reformuler."}'));
-    } else {
-      app.set('response2', query);
-      console.log(app.get('response2'));
-      var rep = questions[3];
-      sendResponse(response, rep);
-    }
-  } else if (app.get('response3')=='0') {
-      app.set('response3', query);
-      console.log(app.get('response3'));
+    } else if (k==questions.length-1) {
+      app.set('response'+k, query);
+      console.log(app.get('response'+k));
 
       // Load client secrets from a local file.
       fs.readFile('client_secret.json', function processClientSecrets(err, content) {
@@ -115,6 +98,7 @@ function processForm(query, response) {
         app.set('response'+j, '0');
       }
       response.send(JSON.parse('{ "speech": "Formulaire terminé", "displayText": "formualire terminé" }'));
+    }
   }
 }
 
