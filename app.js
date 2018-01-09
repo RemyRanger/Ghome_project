@@ -47,7 +47,7 @@ app.post('/api', function(req, response) {
     //IF PROCESSING FORM
     if (app.get('formulaire')=='1') {
       processForm(query, response)
-    } else if (~query.indexOf("remplir formulaire")) { //CASE OF DISCUSSION
+    } else if (~query.indexOf("remplir") && ~query.indexOf("formulaire")) { //CASE OF DISCUSSION
       app.set('formulaire', '1');
       var rep = questions[0];
       sendResponse(response, rep);
@@ -55,6 +55,8 @@ app.post('/api', function(req, response) {
       response.send(JSON.parse('{ "speech": "Je n\'ai pas compris. Pouvez vous reformuler votre demande ?", "displayText": "Je n\'ai pas compris. Pouvez vous reformuler votre demande ?"}'));
     }
 });
+
+// response.send(JSON.parse('{ "speech": "Formulaire terminé", "displayText": "formualire terminé", "data": { "google": {"expect_user_response": false}}}'));
 
 // RUNNING SERVER
 var port = 80;
@@ -108,7 +110,8 @@ function processForm(query, response) {
           var myrep = [app.get('response0'), app.get('response1'), app.get('response2'), query];
           authorize(JSON.parse(content), postFormulaire, myrep);
       });
-      response.send(JSON.parse('{ "speech": "Formulaire terminé", "displayText": "formualire terminé", "data": { "google": {"expect_user_response": false}}}'));
+      app.set('formulaire', '0');
+      response.send(JSON.parse('{ "speech": "Formulaire terminé", "displayText": "formualire terminé" }'));
   }
 }
 
@@ -221,6 +224,7 @@ function callAppsScript(auth, query) {
             }
         } else {
             var folderSet = resp.response.result.questions;
+            console.log('size questions:'+folderSet.size());
             app.set('questions', resp.response.result.questions);
         }
 
