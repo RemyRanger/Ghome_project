@@ -223,8 +223,7 @@ function callAppsScript(auth, query) {
                 }
             }
         } else {
-            var folderSet = resp.response.result.questions;
-            console.log('size questions:'+folderSet.size());
+            console.log('size questions:'+resp.response.result.questions.length);
             app.set('questions', resp.response.result.questions);
         }
 
