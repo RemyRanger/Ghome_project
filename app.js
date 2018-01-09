@@ -111,7 +111,7 @@ function processForm(query, response) {
           authorize(JSON.parse(content), postFormulaire, myrep);
       });
       app.set('formulaire', '0');
-      for (var j = 0; j < sizeForm; j++) {
+      for (var j = 0; j < questions.length; j++) {
         app.set('response'+j, '0');
       }
       response.send(JSON.parse('{ "speech": "Formulaire terminé", "displayText": "formualire terminé" }'));
@@ -228,7 +228,6 @@ function callAppsScript(auth, query) {
         } else {
             console.log('Questions handled:'+resp.response.result.questions);
             console.log('Questions Size:'+resp.response.result.questions.length);
-            const sizeForm = resp.response.result.questions.length;
             for (var j = 0; j < resp.response.result.questions.length; j++) {
               app.set('response'+j, '0');
             }
