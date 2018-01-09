@@ -69,17 +69,7 @@ function processForm(query, response) {
 
   //START DISCUSSION
   for (var k = 0; k < questions.length; k++) {
-    if (app.get('response'+k)=='0') {
-      if (checkOuiNon(questions[k], query) == false) {
-        response.send(JSON.parse('{ "speech": "Votre réponse doit contenire un oui ou un non, veuillez reformuler.", "displayText": "Votre réponse doit contenire un oui ou un non, veuillez reformuler."}'));
-      } else {
-        app.set('response'+k, query);
-        console.log(app.get('response'+k));
-        var rep = questions[k+1];
-        sendResponse(response, rep);
-      }
-      break;
-    } else if (k==questions.length-1) {
+    if (k==questions.length-1) {
       app.set('response'+k, query);
       console.log(app.get('response'+k));
 
@@ -99,6 +89,16 @@ function processForm(query, response) {
         app.set('response'+j, '0');
       }
       response.send(JSON.parse('{ "speech": "Formulaire terminé", "displayText": "formualire terminé" }'));
+    } else if (app.get('response'+k)=='0') {
+      if (checkOuiNon(questions[k], query) == false) {
+        response.send(JSON.parse('{ "speech": "Votre réponse doit contenire un oui ou un non, veuillez reformuler.", "displayText": "Votre réponse doit contenire un oui ou un non, veuillez reformuler."}'));
+      } else {
+        app.set('response'+k, query);
+        console.log(app.get('response'+k));
+        var rep = questions[k+1];
+        sendResponse(response, rep);
+      }
+      break;
     }
   }
 }
