@@ -49,8 +49,11 @@ app.post('/api', function(req, response) {
       processForm(query, response)
     } else if (~query.indexOf("remplir") && ~query.indexOf("formulaire")) { //CASE OF DISCUSSION
       app.set('formulaire', '1');
-      var rep = questions[0];
-      sendResponse(response, rep);
+      response.send(JSON.parse('{ "speech": "Très bien ! J\'ai récupéré le formulaire de test, nous allons commencer. '+rep'" , "displayText": "Aujourd\'hui, vous avez fait 5768 pas."}'));
+    } else if (~query.indexOf("nombre") && ~query.indexOf("pas")) { //CASE OF DISCUSSION
+      response.send(JSON.parse('{ "speech": "D\'après les informations récupérées. Aujourd\'hui, vous avez fait 5768 pas. Comment puis-je vous aider maintenant ?", "displayText": "Aujourd\'hui, vous avez fait 5768 pas."}'));
+    } else if (~query.indexOf("emploi") && ~query.indexOf("temps")) { //CASE OF DISCUSSION
+      response.send(JSON.parse('{ "speech": "D\'après les informations récupérées. Aujourd\'hui, vous avez un cours à 14 heure avec Monsieur Consel. Que souhaitez-vous maintenant ?", "displayText": "Aujourd\'hui, vous avez un cours à 14 heure avec Monsieur Consel."}'));
     } else {
       response.send(JSON.parse('{ "speech": "Je n\'ai pas compris. Pouvez vous reformuler votre demande ?", "displayText": "Je n\'ai pas compris. Pouvez vous reformuler votre demande ?"}'));
     }
