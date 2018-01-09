@@ -78,6 +78,7 @@ function processForm(query, response) {
         var rep = questions[k+1];
         sendResponse(response, rep);
       }
+      break;
     } else if (k==questions.length-1) {
       app.set('response'+k, query);
       console.log(app.get('response'+k));
