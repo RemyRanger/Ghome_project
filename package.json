@@ -10,6 +10,7 @@
     "express": "~4.9.8",
     "google-auth-library": "^0.11.0",
     "googleapis": "^22.2.0",
+    "https": "^1.0.0",
     "oauth": "0.9.10",
     "package.json": "^2.0.1"
   }
