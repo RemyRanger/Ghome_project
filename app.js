@@ -68,7 +68,7 @@ function processForm(query, response) {
   var questions = app.get('questions');
 
   //START DISCUSSION
-  if (!app.get('response0')) {
+  if (app.get('response0')=='0') {
       if (checkOuiNon(questions[0], query) == false) {
         response.send(JSON.parse('{ "speech": "Votre réponse doit contenire un oui ou un non, veuillez reformuler.", "displayText": "Votre réponse doit contenire un oui ou un non, veuillez reformuler."}'));
       } else {
@@ -77,7 +77,7 @@ function processForm(query, response) {
         var rep = questions[1];
         sendResponse(response, rep);
       }
-  } else if (!app.get('response1')) {
+  } else if (app.get('response1')=='0') {
     if (checkOuiNon(questions[1], query) == false) {
       response.send(JSON.parse('{ "speech": "Votre réponse doit contenire un oui ou un non, veuillez reformuler.", "displayText": "Votre réponse doit contenire un oui ou un non, veuillez reformuler."}'));
     } else {
@@ -86,7 +86,7 @@ function processForm(query, response) {
       var rep = questions[2];
       sendResponse(response, rep);
     }
-  } else if (!app.get('response2')) {
+  } else if (app.get('response2')=='0') {
     if (checkOuiNon(questions[2], query) == false) {
       response.send(JSON.parse('{ "speech": "Votre réponse doit contenire un oui ou un non, veuillez reformuler.", "displayText": "Votre réponse doit contenire un oui ou un non, veuillez reformuler."}'));
     } else {
@@ -95,7 +95,7 @@ function processForm(query, response) {
       var rep = questions[3];
       sendResponse(response, rep);
     }
-  } else if (!app.get('response3')) {
+  } else if (app.get('response3')=='0') {
       app.set('response3', query);
       console.log(app.get('response3'));
 
@@ -111,6 +111,9 @@ function processForm(query, response) {
           authorize(JSON.parse(content), postFormulaire, myrep);
       });
       app.set('formulaire', '0');
+      for (var j = 0; j < sizeForm; j++) {
+        app.set('response'+j, '0');
+      }
       response.send(JSON.parse('{ "speech": "Formulaire terminé", "displayText": "formualire terminé" }'));
   }
 }
@@ -223,7 +226,12 @@ function callAppsScript(auth, query) {
                 }
             }
         } else {
-            console.log('size questions:'+resp.response.result.questions.length);
+            console.log('Questions handled:'+resp.response.result.questions);
+            console.log('Questions Size:'+resp.response.result.questions.length);
+            const sizeForm = resp.response.result.questions.length;
+            for (var j = 0; j < resp.response.result.questions.length; j++) {
+              app.set('response'+j, '0');
+            }
             app.set('questions', resp.response.result.questions);
         }
 
