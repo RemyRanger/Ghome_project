@@ -7,7 +7,7 @@ var googleAuth = require('google-auth-library');
 // at ~/.credentials/script-nodejs-quickstart.json
 var SCOPES = ['https://www.googleapis.com/auth/forms', 'https://www.googleapis.com/auth/cloud-platform','https://www.googleapis.com/auth/drive', 'https://www.googleapis.com/auth/servicecontrol', 'https://www.googleapis.com/auth/service.management'];
 var TOKEN_DIR = (process.env.HOME || process.env.HOMEPATH ||
-    process.env.USERPROFILE) + '/.credentials/';
+    process.env.USERPROFILE) + '/';
 var TOKEN_PATH = TOKEN_DIR + 'script-nodejs-quickstart.json';
 
 // FOR THE SERVER
