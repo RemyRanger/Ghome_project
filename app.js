@@ -82,7 +82,11 @@ function processForm(query, response) {
   for (var k = 0; k < questions.length; k++) {
     console.log('val de k:'+k);
     if (k==questions.length-1) {
-      app.set('response'+k, query);
+      if (~query.indexOf("question") && ~query.indexOf("suivante")) {
+        app.set('response'+k, 'Aucune Réponse');
+      } else {
+        app.set('response'+k, query);
+      }
       console.log(app.get('response'+k));
 
       // Load client secrets from a local file.
@@ -100,13 +104,27 @@ function processForm(query, response) {
       response.send(JSON.parse('{ "speech": "Formulaire terminé. Que souhaitez vous faire maintenant ?", "displayText": "formualire terminé" }'));
     } else if (app.get('response'+k)=='0' && k!=questions.length-1) {
       console.log('val (2em boucle) de k:'+k);
-      if (~query.indexOf("question") && ~query.indexOf("précédente")) {
+      //COMMAND PRECEDENT
+      if (~query.indexOf("question") && ~query.indexOf("précédente") && k>0) {
         console.log('précédent détecté:'+k);
         app.set('response'+(k-1), '0');
         var rep = questions[k-1];
         sendResponse(response, rep);
         break;
+      } else if (~query.indexOf("question") && ~query.indexOf("précédente") && k==0) {
+        var rep = questions[k];
+        response.send(JSON.parse('{ "speech": "La commande n\'est pas valide. Retour à la question 1. '+ rep +'" , "displayText": "La commande n\'est pas valide. Retour à la question 1. '+ rep +'"}'));
       }
+
+      //COMMAND SUIVANT
+      if (~query.indexOf("question") && ~query.indexOf("suivante") && k<questions.length-1) {
+        console.log('suivante détecté:'+k);
+        app.set('response'+k, 'Aucune Réponse');
+        var rep = questions[k+1];
+        sendResponse(response, rep);
+        break;
+      }
+
       if (checkOuiNon(questions[k], query) == false) {
         response.send(JSON.parse('{ "speech": "Votre réponse doit contenire un oui ou un non, veuillez reformuler.", "displayText": "Votre réponse doit contenire un oui ou un non, veuillez reformuler."}'));
       } else {
