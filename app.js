@@ -46,7 +46,12 @@ app.post('/api', function(req, response) {
     var questions = app.get('questions');
     //IF PROCESSING FORM
     if (app.get('formulaire')=='1') {
-      processForm(query, response)
+      if (~query.indexOf("quit") || ~query.indexOf("termin")) { //CASE OF DISCUSSION
+        response.send(JSON.parse('{ "speech": "Vous avez abandonné le formulaire. Retour au menu principal.", "displayText": "Vous avez abandonné le formulaire. Retour au menu principal."}'));
+        app.set('formulaire', '0');
+      } else {
+        processForm(query, response)
+      }
     } else if (~query.indexOf("remplir") && ~query.indexOf("formulaire")) { //CASE OF DISCUSSION
       app.set('formulaire', '1');
       for (var j = 0; j < questions.length; j++) {
@@ -102,7 +107,7 @@ function processForm(query, response) {
           }
           // Authorize a client with the loaded credentials, then call the
           // Google Apps Script Execution API.
-          var myrep = [app.get('response0'), app.get('response1'), app.get('response2'), query];
+          var myrep = [app.get('response0'), app.get('response1'), app.get('response2'), app.get('response3')];
           authorize(JSON.parse(content), postFormulaire, myrep);
       });
       app.set('formulaire', '0');
