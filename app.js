@@ -84,6 +84,11 @@ function processForm(query, response) {
     if (k==questions.length-1) {
       if (~query.indexOf("question") && ~query.indexOf("suivante")) {
         app.set('response'+k, 'Aucune Réponse');
+      } else if (~query.indexOf("question") && ~query.indexOf("précédente")) {
+        app.set('response'+(k-1), '0');
+        var rep = questions[k-1];
+        sendResponse(response, rep);
+        break;
       } else {
         app.set('response'+k, query);
       }
