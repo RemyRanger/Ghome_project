@@ -74,45 +74,9 @@ app.listen(port);
 function processForm(query, response) {
   //SET VAR
   var questions = app.get('questions');
-  var k = 0;
-  while (k < questions.length) {
-    console.log('val de k:'+k);
-    if (k==questions.length-1) {
-      app.set('response'+k, query);
-      console.log(app.get('response'+k));
-
-      // Load client secrets from a local file.
-      fs.readFile('client_secret.json', function processClientSecrets(err, content) {
-          if (err) {
-              console.log('Error loading client secret file: ' + err);
-              return;
-          }
-          // Authorize a client with the loaded credentials, then call the
-          // Google Apps Script Execution API.
-          var myrep = [app.get('response0'), app.get('response1'), app.get('response2'), query];
-          authorize(JSON.parse(content), postFormulaire, myrep);
-      });
-      app.set('formulaire', '0');
-      for (var j = 0; j < questions.length; j++) {
-        app.set('response'+j, '0');
-      }
-      response.send(JSON.parse('{ "speech": "Formulaire terminé. Que souhaitez vous faire maintenant ?", "displayText": "formualire terminé" }'));
-    } else if (app.get('response'+k)=='0') {
-      if (checkOuiNon(questions[k], query) == false) {
-        response.send(JSON.parse('{ "speech": "Votre réponse doit contenire un oui ou un non, veuillez reformuler.", "displayText": "Votre réponse doit contenire un oui ou un non, veuillez reformuler."}'));
-      } else {
-        app.set('response'+k, query);
-        console.log(app.get('response'+k));
-        var rep = questions[k+1];
-        sendResponse(response, rep);
-      }
-      //break;
-    }
-    k++;
-  }
 
   //START DISCUSSION
-/*  for (var k = 0; k < questions.length; k++) {
+  for (var k = 0; k < questions.length; k++) {
     if (k==questions.length-1) {
       app.set('response'+k, query);
       console.log(app.get('response'+k));
@@ -134,6 +98,11 @@ function processForm(query, response) {
       }
       response.send(JSON.parse('{ "speech": "Formulaire terminé. Que souhaitez vous faire maintenant ?", "displayText": "formualire terminé" }'));
     } else if (app.get('response'+k)=='0') {
+      if (~query.indexOf("question") && ~query.indexOf("précédente")) {
+        app.set('response'+(k-1), '0');
+        var rep = questions[k-1];
+        sendResponse(response, rep);
+      }
       if (checkOuiNon(questions[k], query) == false) {
         response.send(JSON.parse('{ "speech": "Votre réponse doit contenire un oui ou un non, veuillez reformuler.", "displayText": "Votre réponse doit contenire un oui ou un non, veuillez reformuler."}'));
       } else {
@@ -144,7 +113,7 @@ function processForm(query, response) {
       }
       break;
     }
-  }*/
+  }
 }
 
 function sendResponse(response, question) {
