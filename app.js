@@ -102,6 +102,7 @@ function processForm(query, response) {
         app.set('response'+(k-1), '0');
         var rep = questions[k-1];
         sendResponse(response, rep);
+        break;
       }
       if (checkOuiNon(questions[k], query) == false) {
         response.send(JSON.parse('{ "speech": "Votre réponse doit contenire un oui ou un non, veuillez reformuler.", "displayText": "Votre réponse doit contenire un oui ou un non, veuillez reformuler."}'));
