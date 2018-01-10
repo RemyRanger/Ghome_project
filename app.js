@@ -49,6 +49,9 @@ app.post('/api', function(req, response) {
       processForm(query, response)
     } else if (~query.indexOf("remplir") && ~query.indexOf("formulaire")) { //CASE OF DISCUSSION
       app.set('formulaire', '1');
+      for (var j = 0; j < questions.length; j++) {
+        app.set('response'+j, '0');
+      }
       var rep = questions[0];
       response.send(JSON.parse('{ "speech": "Très bien ! J\'ai récupéré le formulaire de test, nous allons commencer. '+ rep +'" , "displayText": "Très bien ! J\'ai récupéré le formulaire de test, nous allons commencer. '+ rep +'"}'));
     } else if (~query.indexOf("nombre") && ~query.indexOf("pas")) { //CASE OF DISCUSSION
@@ -94,11 +97,8 @@ function processForm(query, response) {
           authorize(JSON.parse(content), postFormulaire, myrep);
       });
       app.set('formulaire', '0');
-      for (var j = 0; j < questions.length; j++) {
-        app.set('response'+j, '0');
-      }
       response.send(JSON.parse('{ "speech": "Formulaire terminé. Que souhaitez vous faire maintenant ?", "displayText": "formualire terminé" }'));
-    } else if (app.get('response'+k)=='0') {
+    } else if (app.get('response'+k)=='0' && k!=questions.length-1) {
       console.log('val (2em boucle) de k:'+k);
       if (~query.indexOf("question") && ~query.indexOf("précédente")) {
         console.log('précédent détecté:'+k);
