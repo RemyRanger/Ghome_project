@@ -77,6 +77,7 @@ function processForm(query, response) {
 
   //START DISCUSSION
   for (var k = 0; k < questions.length; k++) {
+    console.log('val de k:'+k);
     if (k==questions.length-1) {
       app.set('response'+k, query);
       console.log(app.get('response'+k));
@@ -98,7 +99,9 @@ function processForm(query, response) {
       }
       response.send(JSON.parse('{ "speech": "Formulaire terminé. Que souhaitez vous faire maintenant ?", "displayText": "formualire terminé" }'));
     } else if (app.get('response'+k)=='0') {
+      console.log('val (2em boucle) de k:'+k);
       if (~query.indexOf("question") && ~query.indexOf("précédente")) {
+        console.log('précédent détecté:'+k);
         app.set('response'+(k-1), '0');
         var rep = questions[k-1];
         sendResponse(response, rep);
