@@ -119,6 +119,7 @@ function processForm(query, response) {
       } else if (~query.indexOf("question") && ~query.indexOf("précédente") && k==0) {
         var rep = questions[k];
         response.send(JSON.parse('{ "speech": "La commande n\'est pas valide. Retour à la question 1. '+ rep +'" , "displayText": "La commande n\'est pas valide. Retour à la question 1. '+ rep +'"}'));
+        break;
       }
 
       //COMMAND SUIVANT
