@@ -12,6 +12,11 @@
     "googleapis": "^22.2.0",
     "https": "^1.0.0",
     "oauth": "0.9.10",
-    "package.json": "^2.0.1"
+    "package.json": "^2.0.1",
+    "ws": "^4.0.0"
+  },
+  "optionalDependencies": {
+    "bufferutil": "^3.0.3",
+    "utf-8-validate": "^4.0.0"
   }
 }
