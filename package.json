@@ -2,7 +2,8 @@
   "name": "GHome_project",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "socket": "NODE_EXTRA_CA_CERTS='./ca.cert' node socket.js"
   },
   "dependencies": {
     "@types/google-apps-script": "0.0.17",
