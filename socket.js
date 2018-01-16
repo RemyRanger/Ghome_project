@@ -3,6 +3,11 @@ const diaSockDev = 'wss://appartement:appartement@domassist-dev.bordeaux.inria.f
 
 const WebSocket = require('ws');
 var fs = require('fs');
+var rootCas = require('ssl-root-cas/latest').create();
+
+rootCas.addFile(__dirname + '/ca.crt');
+
+require('https').globalAgent.options.ca = rootCas;
 
 const ws = new WebSocket(diaSock,{
     ca:[fs.readFileSync('ca.crt')]
