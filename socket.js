@@ -10,7 +10,7 @@ rootCas.addFile(__dirname + '/ca.crt');
 require('https').globalAgent.options.ca = rootCas;
 
 const ws = new WebSocket(diaSock,{
-    ca:[fs.readFileSync('ca.crt')]
+    ca:rootCas
 });
 
 ws.on('open', function open() {
