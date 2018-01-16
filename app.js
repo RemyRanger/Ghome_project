@@ -3,6 +3,8 @@ var readline = require('readline');
 var google = require('googleapis');
 var googleAuth = require('google-auth-library');
 const https = require('https');
+const socket = require('socket');
+const WebSocket = require('ws');
 
 // If modifying these scopes, delete your previously saved credentials
 // at ~/.credentials/script-nodejs-quickstart.json
@@ -15,6 +17,10 @@ var TOKEN_PATH = TOKEN_DIR + 'script-nodejs-quickstart.json';
 var express = require('express');
 var bodyParser = require('body-parser');
 var app = express();
+
+// RUNNING SERVER
+var port = 80;
+app.listen(port);
 
 //USE JSON FORMAT
 app.use(bodyParser.json());
@@ -58,6 +64,7 @@ app.post('/api', function(req, response) {
         app.set('response'+j, '0');
       }
       var rep = questions[0];
+
       response.send(JSON.parse('{ "speech": "Très bien ! J\'ai récupéré le formulaire de test, nous allons commencer. '+ rep +'" , "displayText": "Très bien ! J\'ai récupéré le formulaire de test, nous allons commencer. '+ rep +'"}'));
     } else if (~query.indexOf("nombre") && ~query.indexOf("pas")) { //CASE OF DISCUSSION
       response.send(JSON.parse('{ "speech": "D\'après les informations récupérées. Aujourd\'hui, vous avez fait 5768 pas. Comment puis-je vous aider maintenant ?", "displayText": "Aujourd\'hui, vous avez fait 5768 pas."}'));
@@ -74,9 +81,6 @@ app.post('/api', function(req, response) {
 
 // response.send(JSON.parse('{ "speech": "Formulaire terminé", "displayText": "formualire terminé", "data": { "google": {"expect_user_response": false}}}'));
 
-// RUNNING SERVER
-var port = 80;
-app.listen(port);
 
 //USEFULL FUNCTIONS
 function processForm(query, response) {
