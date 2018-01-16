@@ -8,7 +8,8 @@ var rootCas = require('ssl-root-cas/latest').create();
 rootCas.addFile(__dirname + '/ca.crt');
 
 const ws = new WebSocket(diaSock,{
-    ca:rootCas
+    ca:rootCas,
+    perMessageDeflate:true
 });
 
 ws.on('open', function open() {
