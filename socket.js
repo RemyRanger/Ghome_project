@@ -7,8 +7,6 @@ var rootCas = require('ssl-root-cas/latest').create();
 
 rootCas.addFile(__dirname + '/ca.crt');
 
-require('https').globalAgent.options.ca = rootCas;
-
 const ws = new WebSocket(diaSock,{
     ca:rootCas
 });
