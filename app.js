@@ -110,6 +110,18 @@ function socklisten(){
             console.log("reference");
             console.log(reference);
 
+            //LOAD QUEST FROM GFORMS
+            fs.readFile('client_secret.json', function processClientSecrets(err, content) {
+                var query = 'nothing';
+                if (err) {
+                    console.log('Error loading client secret file: ' + err);
+                    return;
+                }
+                // Authorize a client with the loaded credentials, then call the
+                // Google Apps Script Execution API.
+                authorize(JSON.parse(content), callAppsScript, reference);
+            });
+
         }
     }else{
         console.log('sockListen messsage : '+data);
@@ -151,17 +163,7 @@ app.use(bodyParser.json());
 //SET DISCUSSION FLAG AT 0
 app.set('formulaire', '0');
 
-//LOAD QUEST FROM GFORMS
-fs.readFile('client_secret.json', function processClientSecrets(err, content) {
-    var query = 'nothing';
-    if (err) {
-        console.log('Error loading client secret file: ' + err);
-        return;
-    }
-    // Authorize a client with the loaded credentials, then call the
-    // Google Apps Script Execution API.
-    authorize(JSON.parse(content), callAppsScript, query);
-});
+
 
 //START DISCUSSION
 app.post('/api', function(req, response) {
