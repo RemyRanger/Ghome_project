@@ -19,6 +19,14 @@ const ws2 = new WebSocket(`${diaSock}:443`, {
 });
 
 
+function filter(data){
+    if((data.type).equals('googlehome')){
+        console.log("ws2 : " + data);
+        //setTimeout(() =>{ws2.close(console.log(("closed")))},5000);
+        //setTimeout(()=>{closeSocket(ws2)},2500);
+    }
+}
+
 //setInterval((ws2.send("PING")),30000);
 
 // If modifying these scopes, delete your previously saved credentials
@@ -98,7 +106,8 @@ app.post('/api', function(req, response) {
         });
 
             ws2.on('message', (data) => {
-                console.log("ws2 : " + data);
+                //console.log("ws2 : " + data);
+                filter(data);
             var result = JSON.parse(data);
             console.log(result);
             console.log(result.data.args.response);
