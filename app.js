@@ -16,17 +16,6 @@ const options = {
 const diaSock = 'wss://appartement:appartement@diasuitebox-jvm2.bordeaux.inria.fr/userbox/ws?keepalive=client';
 
 
-
-function filter(data){
-    if((data.type).equals('googlehome')){
-        console.log("ws2 : " + data);
-        //setTimeout(() =>{ws2.close(console.log(("closed")))},5000);
-        //setTimeout(()=>{closeSocket(ws2)},2500);
-    }
-}
-
-//setInterval((ws2.send("PING")),30000);
-
 // If modifying these scopes, delete your previously saved credentials
 // at ~/.credentials/script-nodejs-quickstart.json
 var SCOPES = ['https://www.googleapis.com/auth/forms', 'https://www.googleapis.com/auth/cloud-platform', 'https://www.googleapis.com/auth/drive', 'https://www.googleapis.com/auth/servicecontrol', 'https://www.googleapis.com/auth/service.management'];
