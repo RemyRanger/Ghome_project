@@ -7,14 +7,93 @@ var googleAuth = require('google-auth-library');
 const https = require('https');
 const WebSocket = require('ws');
 
+
+
+/*
 const options = {
     cert: fs.readFileSync('./https/server.crt'),
     key: fs.readFileSync('./https/server.key')
 };
+const server = https.createServer(options);
+
+const wss = new WebSocket.Server({ server });
+
+wss.on('connection', function connection (ws) {
+  console.log('new connection')
+  ws.on('message', function message (msg) {
+    console.log(msg);
+  });
+});
+*/
+
+//const diaSock = 'wss://appartement:appartement@diasuitebox-jvm2.bordeaux.inria.fr/userbox/ws?keepalive=client';
 
 
-const diaSock = 'wss://appartement:appartement@diasuitebox-jvm2.bordeaux.inria.fr/userbox/ws?keepalive=client';
+const diaSock = 'wss://appartement:appartement@diasuitebox-jvm2.bordeaux.inria.fr:443/userbox/ws?keepalive=client';
+const clientName = 'googlehome';
+const pingInterval = 45000;
+const pingValue = 'PING:';
 
+var diaData = {
+    type: clientName,
+    data: {
+        action: "send_request",
+        args: {
+            request: "Inactivity level"
+        }
+    }
+};
+
+function IsJsonString(str) {
+    try {
+        JSON.parse(str);
+    } catch (e) {
+        return false;
+    }
+    return true;
+}
+
+function sockcom(req) {
+    return new Promise((resolve, reject) => {
+        var ping;
+    var res;
+
+    var ws2 = new WebSocket(diaSock, {
+        rejectUnauthorized: false
+    });
+
+    ws2.on('open', () => {
+        // console.log('sockcom open')
+        ws2.send("CLIENT:" + clientName, () => {
+        ping = setInterval(() => { ws2.send(pingValue) }, pingInterval);
+});
+    ws2.send(JSON.stringify(req));
+});
+
+    ws2.on('message', (data) => {
+        if (IsJsonString(data)) {
+        data = JSON.parse(data);
+        if(data.type.toString().trim() === clientName){
+            res = data;
+            setTimeout(() => {
+                clearInterval(ping);
+            ws2.close();
+        }, 1000)
+        }
+    }
+});
+
+    ws2.on('close', () => {
+        // console.log('sockcom close')
+        if (res) {
+            resolve(res);
+        } else {
+            reject('No data')
+}
+});
+
+})
+}
 
 // If modifying these scopes, delete your previously saved credentials
 // at ~/.credentials/script-nodejs-quickstart.json
@@ -189,7 +268,7 @@ app.post('/api', function(req, response) {
     });
 
     } else if (~query.indexOf("Living") && ~query.indexOf("light")) { //CASE OF DISCUSSION
-        const ws6 = new WebSocket(`${diaSock}:443`, {
+        /*const ws6 = new WebSocket(`${diaSock}:443`, {
             rejectUnauthorized: false
         });
         ws6.on('open', function open() {
@@ -214,7 +293,13 @@ app.post('/api', function(req, response) {
         response.send(JSON.parse('{ "speech": "' + result.data.args.response + ' Comment puis-je vous aider maintenant ?", "displayText": "' + result.data.args.response + '"}'));
         setTimeout(() => {ws6.close(console.log(("closed")))},5000);
 
-    });
+    });*/
+        sockcom(diaData).then((res) => {
+            console.log(res);
+        response.send(JSON.parse('{ "speech": "' + res.data.args.response + ' Comment puis-je vous aider maintenant ?", "displayText": "' + res.data.args.response + '"}'));
+    }, (err) => {
+            console.log(err);
+        });
     }else if (~query.indexOf("Last") && ~query.indexOf("monitored")) { //CASE OF DISCUSSION
         const ws1 = new WebSocket(`${diaSock}:443`, {
             rejectUnauthorized: false
