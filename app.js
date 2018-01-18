@@ -226,6 +226,33 @@ app.post('/api', function(req, response) {
         setTimeout(() => {ws6.close(console.log(("closed")))},5000);
 
     });
+    }else if (~query.indexOf("Last") && ~query.indexOf("monitored")) { //CASE OF DISCUSSION
+        const ws1 = new WebSocket(`${diaSock}:443`, {
+            rejectUnauthorized: false
+        });
+        ws1.on('open', function open() {
+            console.log("websocket opened");
+            var json = {
+                type: "googlehome",
+                data: {
+                    action: "send_request",
+                    args: {
+                        request: "Last monitored action"
+                    }
+                }
+            };
+            ws1.send(JSON.stringify(json));
+
+        });
+        ws1.on('message', (data) => {
+            console.log("ws2 : " + data);
+        var result = JSON.parse(data);
+        console.log(result);
+        console.log(result.data.args.response);
+        response.send(JSON.parse('{ "speech": "' + result.data.args.response + ' Comment puis-je vous aider maintenant ?", "displayText": "' + result.data.args.response + '"}'));
+        setTimeout(() => {ws1.close(console.log(("closed")))},5000);
+
+        });
     }else {
       response.send(JSON.parse('{ "speech": "Je n\'ai pas compris. Pouvez vous reformuler votre demande ?", "displayText": "Je n\'ai pas compris. Pouvez vous reformuler votre demande ?"}'));
     }
