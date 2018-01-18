@@ -344,7 +344,7 @@ function processForm(query, response) {
                     }
                 };
                 sockcom(diaData).then(() => {
-                    console.log('Responses transmissent a diaSuite')
+                    console.log('Reponses transmissent a diaSuite')
                 }, (err) => {
                     console.log(err);
                 })
