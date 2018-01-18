@@ -14,8 +14,13 @@ const options = {
 
 
 const diaSock = 'wss://appartement:appartement@diasuitebox-jvm2.bordeaux.inria.fr/userbox/ws?keepalive=client';
+const ws2 = new WebSocket(`${diaSock}:443`, {
+    rejectUnauthorized: false
+});
+ws2.on('open', function open () {
+    console.log("websocket opened");
 
-
+});
 
 // If modifying these scopes, delete your previously saved credentials
 // at ~/.credentials/script-nodejs-quickstart.json
@@ -78,29 +83,16 @@ app.post('/api', function(req, response) {
 
       response.send(JSON.parse('{ "speech": "Très bien ! J\'ai récupéré le formulaire de test, nous allons commencer. '+ rep +'" , "displayText": "Très bien ! J\'ai récupéré le formulaire de test, nous allons commencer. '+ rep +'"}'));
     } else if (~query.indexOf("Inactivity") && ~query.indexOf("level")) { //CASE OF DISCUSSION
-            //
-            // If the `rejectUnauthorized` option is not `false`, the server certificate
-            // is verified against a list of well-known CAs. An 'error' event is emitted
-            // if verification fails.
-            // The certificate used in this example is self-signed so `rejectUnauthorized`
-            // is set to `false`.
-            //
-            const ws2 = new WebSocket(`${diaSock}:443`, {
-                rejectUnauthorized: false
-            });
-
-            ws2.on('open', function open () {
-                var json = {
-                    type: "googlehome",
-                    data:{
-                        action: "send_request",
-                        args: {
-                            request: "Inactivity level"
-                        }
+            var json = {
+                type: "googlehome",
+                data:{
+                    action: "send_request",
+                    args: {
+                        request: "Inactivity level"
                     }
-                };
-                ws2.send(JSON.stringify(json));
-            });
+                }
+            };
+            ws2.send(JSON.stringify(json));
             ws2.on('message', (data) => {
                 console.log("ws2 : " + data);
             var result = JSON.parse(data);
@@ -113,8 +105,24 @@ app.post('/api', function(req, response) {
         });*/
 
 
-    } else if (~query.indexOf("emploi") && ~query.indexOf("temps")) { //CASE OF DISCUSSION
-      response.send(JSON.parse('{ "speech": "D\'après les informations récupérées. Aujourd\'hui, vous avez un cours à 14 heure avec Monsieur Consel. Que souhaitez-vous maintenant ?", "displayText": "Aujourd\'hui, vous avez un cours à 14 heure avec Monsieur Consel."}'));
+    } else if (~query.indexOf("Bedroom") && ~query.indexOf("motion")) { //CASE OF DISCUSSION
+        var json = {
+            type: "googlehome",
+            data:{
+                action: "send_request",
+                args: {
+                    request: "Bedroom motion detector state"
+                }
+            }
+        };
+        ws2.send(JSON.stringify(json));
+        ws2.on('message', (data) => {
+            console.log("ws2 : " + data);
+        var result = JSON.parse(data);
+        console.log(result);
+        console.log(result.data.args.response);
+        response.send(JSON.parse('{ "speech": "'+ result.data.args.response + ' Comment puis-je vous aider maintenant ?", "displayText": "'+ result.data.args.response + '"}'));
+    });
     } else if (~query.indexOf("merci")) { //CASE OF DISCUSSION
       response.send(JSON.parse('{ "speech": "Je suis ravi de vous avoir aidé. Avez vous d\'autres questions ?", "displayText": "Je suis ravi de vous avoir aidé. Avez vous d\'autres questions ?"}'));
     } else if (~query.indexOf("quit") || ~query.indexOf("termin")) { //CASE OF DISCUSSION
