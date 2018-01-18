@@ -47,6 +47,12 @@ server.listen(port, function listening () {
   });
   ws2.on('message', (data) => {
     console.log("ws2 : " + data);
+    var test = JSON.parse(data);
+    console.log(test);
+    console.log(typeof test);
+    console.log(test.data.args.response);
+    //console.log("ws2 : " + JSON.parse(data.args.response));
+
   });
   ws2.on('close', (data) => {
     console.log("ws2 close: " + data);
