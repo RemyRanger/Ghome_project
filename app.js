@@ -5,24 +5,16 @@ var googleAuth = require('google-auth-library');
 
 // WEBSOCKET
 const https = require('https');
-//const socket = require('socket');
 const WebSocket = require('ws');
 
 const options = {
     cert: fs.readFileSync('./https/server.crt'),
     key: fs.readFileSync('./https/server.key')
 };
-const port2 = 8000;
-const server = https.createServer(options);
+
 
 const diaSock = 'wss://appartement:appartement@diasuitebox-jvm2.bordeaux.inria.fr/userbox/ws?keepalive=client';
-const wss = new WebSocket.Server({ server });
-wss.on('connection', function connection (ws) {
-    console.log('new connection')
-    ws.on('message', function message (msg) {
-        console.log(msg);
-    });
-});
+
 
 
 // If modifying these scopes, delete your previously saved credentials
@@ -86,7 +78,6 @@ app.post('/api', function(req, response) {
 
       response.send(JSON.parse('{ "speech": "Très bien ! J\'ai récupéré le formulaire de test, nous allons commencer. '+ rep +'" , "displayText": "Très bien ! J\'ai récupéré le formulaire de test, nous allons commencer. '+ rep +'"}'));
     } else if (~query.indexOf("Inactivity") && ~query.indexOf("level")) { //CASE OF DISCUSSION
-        server.listen(port2, function listening () {
             //
             // If the `rejectUnauthorized` option is not `false`, the server certificate
             // is verified against a list of well-known CAs. An 'error' event is emitted
@@ -117,11 +108,10 @@ app.post('/api', function(req, response) {
             console.log(result.data.args.response);
             response.send(JSON.parse('{ "speech": "'+ result.data.args.response + ' Comment puis-je vous aider maintenant ?", "displayText": "'+ result.data.args.response + '"}'));
         });
-            ws2.on('close', (data) => {
+           /* ws2.on('close', (data) => {
                 console.log("ws2 close: " + data);
-        });
+        });*/
 
-        });
 
     } else if (~query.indexOf("emploi") && ~query.indexOf("temps")) { //CASE OF DISCUSSION
       response.send(JSON.parse('{ "speech": "D\'après les informations récupérées. Aujourd\'hui, vous avez un cours à 14 heure avec Monsieur Consel. Que souhaitez-vous maintenant ?", "displayText": "Aujourd\'hui, vous avez un cours à 14 heure avec Monsieur Consel."}'));
