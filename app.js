@@ -156,7 +156,7 @@ app.post('/api', function(req, response) {
 
       response.send(JSON.parse('{ "speech": "Très bien ! J\'ai récupéré le formulaire de test, nous allons commencer. '+ rep +'" , "displayText": "Très bien ! J\'ai récupéré le formulaire de test, nous allons commencer. '+ rep +'"}'));
     } else if (~query.indexOf("Inactivity") && ~query.indexOf("level")) { //CASE OF DISCUSSION
-        const ws2 = new WebSocket(`${diaSock}:443`, {
+       /* const ws2 = new WebSocket(`${diaSock}:443`, {
             rejectUnauthorized: false
         });
         ws2.on('open', function open () {
@@ -183,6 +183,12 @@ app.post('/api', function(req, response) {
             response.send(JSON.parse('{ "speech": "'+ result.data.args.response + ' Comment puis-je vous aider maintenant ?", "displayText": "'+ result.data.args.response + '"}'));
 
             setTimeout(() =>{ws2.close(console.log(("closed")))},5000);
+        });*/
+        sockcom(diaData).then((res) => {
+            console.log(res);
+        response.send(JSON.parse('{ "speech": "' + res.data.args.response + ' Comment puis-je vous aider maintenant ?", "displayText": "' + res.data.args.response + '"}'));
+    }, (err) => {
+            console.log(err);
         });
 
 
