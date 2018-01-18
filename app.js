@@ -7,7 +7,7 @@ var googleAuth = require('google-auth-library');
 const https = require('https');
 const WebSocket = require('ws');
 
-var reference;
+var reference = "1R2WZXnyvdSBPAvTuLOkccEYbPOFhFOaOAmHAnWCHIck";
 
 /*
 const options = {
