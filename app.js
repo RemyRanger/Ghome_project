@@ -104,7 +104,7 @@ app.post('/api', function(req, response) {
             console.log(result.data.args.response);
             response.send(JSON.parse('{ "speech": "'+ result.data.args.response + ' Comment puis-je vous aider maintenant ?", "displayText": "'+ result.data.args.response + '"}'));
 
-            setTimeout(() =>{ws2.close()},2000);
+            setTimeout(() =>{ws2.close(console.log(("closed")))},5000);
         });
 
 
@@ -130,7 +130,7 @@ app.post('/api', function(req, response) {
         console.log(result);
         console.log(result.data.args.response);
         response.send(JSON.parse('{ "speech": "'+ result.data.args.response + ' Comment puis-je vous aider maintenant ?", "displayText": "'+ result.data.args.response + '"}'));
-        setTimeout(() =>{ws2.close()},2000);
+        setTimeout(() =>{ws2.close(console.log(("closed")))},5000);
     });
     } else if (~query.indexOf("merci")) { //CASE OF DISCUSSION
       response.send(JSON.parse('{ "speech": "Je suis ravi de vous avoir aidé. Avez vous d\'autres questions ?", "displayText": "Je suis ravi de vous avoir aidé. Avez vous d\'autres questions ?"}'));
