@@ -217,7 +217,7 @@ app.post('/api', function(req, response) {
             ws6.send(JSON.stringify(json));
 
         });
-        ws6.on('message', (data) = > {
+        ws6.on('message', (data) => {
             console.log("ws2 : " + data);
         var result = JSON.parse(data);
         console.log(result);
