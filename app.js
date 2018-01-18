@@ -12,7 +12,7 @@ const options = {
     cert: fs.readFileSync('./https/server.crt'),
     key: fs.readFileSync('./https/server.key')
 };
-const port = 8000;
+const port2 = 8000;
 const server = https.createServer(options);
 
 const diaSock = 'wss://appartement:appartement@diasuitebox-jvm2.bordeaux.inria.fr/userbox/ws?keepalive=client';
@@ -86,7 +86,7 @@ app.post('/api', function(req, response) {
 
       response.send(JSON.parse('{ "speech": "Très bien ! J\'ai récupéré le formulaire de test, nous allons commencer. '+ rep +'" , "displayText": "Très bien ! J\'ai récupéré le formulaire de test, nous allons commencer. '+ rep +'"}'));
     } else if (~query.indexOf("Inactivity") && ~query.indexOf("level")) { //CASE OF DISCUSSION
-        server.listen(port, function listening () {
+        server.listen(port2, function listening () {
             //
             // If the `rejectUnauthorized` option is not `false`, the server certificate
             // is verified against a list of well-known CAs. An 'error' event is emitted
