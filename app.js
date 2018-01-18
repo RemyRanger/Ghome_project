@@ -2,9 +2,27 @@ var fs = require('fs');
 var readline = require('readline');
 var google = require('googleapis');
 var googleAuth = require('google-auth-library');
+
+// WEBSOCKET
 const https = require('https');
-const socket = require('socket');
 const WebSocket = require('ws');
+
+const options = {
+    cert: fs.readFileSync('./https/server.crt'),
+    key: fs.readFileSync('./https/server.key')
+};
+
+
+const diaSock = 'wss://appartement:appartement@diasuitebox-jvm2.bordeaux.inria.fr/userbox/ws?keepalive=client';
+const ws2 = new WebSocket(`${diaSock}:443`, {
+    rejectUnauthorized: false
+});
+ws2.on('open', function open () {
+    console.log("websocket opened");
+
+});
+
+setInterval((ws2.send("PING")),30000);
 
 // If modifying these scopes, delete your previously saved credentials
 // at ~/.credentials/script-nodejs-quickstart.json
@@ -66,10 +84,47 @@ app.post('/api', function(req, response) {
       var rep = questions[0];
 
       response.send(JSON.parse('{ "speech": "Très bien ! J\'ai récupéré le formulaire de test, nous allons commencer. '+ rep +'" , "displayText": "Très bien ! J\'ai récupéré le formulaire de test, nous allons commencer. '+ rep +'"}'));
-    } else if (~query.indexOf("nombre") && ~query.indexOf("pas")) { //CASE OF DISCUSSION
-      response.send(JSON.parse('{ "speech": "D\'après les informations récupérées. Aujourd\'hui, vous avez fait 5768 pas. Comment puis-je vous aider maintenant ?", "displayText": "Aujourd\'hui, vous avez fait 5768 pas."}'));
-    } else if (~query.indexOf("emploi") && ~query.indexOf("temps")) { //CASE OF DISCUSSION
-      response.send(JSON.parse('{ "speech": "D\'après les informations récupérées. Aujourd\'hui, vous avez un cours à 14 heure avec Monsieur Consel. Que souhaitez-vous maintenant ?", "displayText": "Aujourd\'hui, vous avez un cours à 14 heure avec Monsieur Consel."}'));
+    } else if (~query.indexOf("Inactivity") && ~query.indexOf("level")) { //CASE OF DISCUSSION
+            var json = {
+                type: "googlehome",
+                data:{
+                    action: "send_request",
+                    args: {
+                        request: "Inactivity level"
+                    }
+                }
+            };
+            ws2.send(JSON.stringify(json));
+            ws2.on('message', (data) => {
+                console.log("ws2 : " + data);
+            var result = JSON.parse(data);
+            console.log(result);
+            console.log(result.data.args.response);
+            response.send(JSON.parse('{ "speech": "'+ result.data.args.response + ' Comment puis-je vous aider maintenant ?", "displayText": "'+ result.data.args.response + '"}'));
+        });
+           /* ws2.on('close', (data) => {
+                console.log("ws2 close: " + data);
+        });*/
+
+
+    } else if (~query.indexOf("Bedroom") && ~query.indexOf("motion")) { //CASE OF DISCUSSION
+        var json = {
+            type: "googlehome",
+            data:{
+                action: "send_request",
+                args: {
+                    request: "Bedroom motion detector state"
+                }
+            }
+        };
+        ws2.send(JSON.stringify(json));
+        ws2.on('message', (data) => {
+            console.log("ws2 : " + data);
+        var result = JSON.parse(data);
+        console.log(result);
+        console.log(result.data.args.response);
+        response.send(JSON.parse('{ "speech": "'+ result.data.args.response + ' Comment puis-je vous aider maintenant ?", "displayText": "'+ result.data.args.response + '"}'));
+    });
     } else if (~query.indexOf("merci")) { //CASE OF DISCUSSION
       response.send(JSON.parse('{ "speech": "Je suis ravi de vous avoir aidé. Avez vous d\'autres questions ?", "displayText": "Je suis ravi de vous avoir aidé. Avez vous d\'autres questions ?"}'));
     } else if (~query.indexOf("quit") || ~query.indexOf("termin")) { //CASE OF DISCUSSION

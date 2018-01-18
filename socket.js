@@ -11,7 +11,7 @@ const server = https.createServer(options);
 const diaSock = 'wss://appartement:appartement@diasuitebox-jvm2.bordeaux.inria.fr/userbox/ws?keepalive=client';
 const diaSockDev = 'wss://appartement:appartement@domassist-dev.bordeaux.inria.fr/userbox/ws?keepalive=client';
 
-const wss = new WebSocket.Server({ server });
+/*const wss = new WebSocket.Server({ server });
 
 wss.on('connection', function connection (ws) {
   console.log('new connection')
@@ -19,14 +19,14 @@ wss.on('connection', function connection (ws) {
     console.log(msg);
   });
 });
+*/
 
 
-server.listen(port, function listening () {
+//server.listen(port, function listening () {
   //
   // If the `rejectUnauthorized` option is not `false`, the server certificate
   // is verified against a list of well-known CAs. An 'error' event is emitted
   // if verification fails.
-  //
   // The certificate used in this example is self-signed so `rejectUnauthorized`
   // is set to `false`.
   //
@@ -48,6 +48,15 @@ server.listen(port, function listening () {
   });
   ws2.on('message', (data) => {
     console.log("ws2 : " + data);
+    var test = JSON.parse(data);
+    console.log(test);
+    console.log(typeof test);
+    console.log(test.data.args.response);
+    //console.log("ws2 : " + JSON.parse(data.args.response));
+
+  });
+  ws2.on('close', (data) => {
+    console.log("ws2 close: " + data);
   });
 
-});
+//});
