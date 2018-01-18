@@ -145,11 +145,88 @@ app.post('/api', function(req, response) {
         response.send(JSON.parse('{ "speech": "'+ result.data.args.response + ' Comment puis-je vous aider maintenant ?", "displayText": "'+ result.data.args.response + '"}'));
         setTimeout(() =>{ws3.close(console.log(("closed")))},5000);
     });
-    } else if (~query.indexOf("merci")) { //CASE OF DISCUSSION
-      response.send(JSON.parse('{ "speech": "Je suis ravi de vous avoir aidé. Avez vous d\'autres questions ?", "displayText": "Je suis ravi de vous avoir aidé. Avez vous d\'autres questions ?"}'));
-    } else if (~query.indexOf("quit") || ~query.indexOf("termin")) { //CASE OF DISCUSSION
-      response.send(JSON.parse('{ "speech": "Je vous souhaite une agréable journé !", "displayText": "Je vous souhaite une agréable journé !", "data": { "google": {"expect_user_response": false}}}'));
-    } else {
+    } else if (~query.indexOf("Fridge")&& ~query.indexOf("door")) { //CASE OF DISCUSSION
+        const ws4 = new WebSocket(`${diaSock}:443`, {
+            rejectUnauthorized: false
+        });
+        ws4.on('open', function open () {
+            console.log("websocket opened");
+            var json = {
+                type: "googlehome",
+                data:{
+                    action: "send_request",
+                    args: {
+                        request: "Fridge door contact sensor state"
+                    }
+                }
+            };
+            ws4.send(JSON.stringify(json));
+
+        });
+        ws4.on('message', (data) => {
+            console.log("ws2 : " + data);
+        var result = JSON.parse(data);
+        console.log(result);
+        console.log(result.data.args.response);
+        response.send(JSON.parse('{ "speech": "' + result.data.args.response + ' Comment puis-je vous aider maintenant ?", "displayText": "' + result.data.args.response + '"}'));
+        setTimeout(() = > {ws4.close(console.log(("closed")))},5000)        ;
+    });
+    } else if (~query.indexOf("Entrance") || ~query.indexOf("door")) { //CASE OF DISCUSSION
+            const ws5 = new WebSocket(`${diaSock}:443`, {
+                rejectUnauthorized: false
+            });
+            ws5.on('open', function open () {
+                console.log("websocket opened");
+                var json = {
+                    type: "googlehome",
+                    data:{
+                        action: "send_request",
+                        args: {
+                            request: "Entrance door contact sensor state"
+                        }
+                    }
+                };
+                ws5.send(JSON.stringify(json));
+
+            });
+            ws5.on('message', (data) => {
+                console.log("ws2 : " + data);
+        var result = JSON.parse(data);
+        console.log(result);
+        console.log(result.data.args.response);
+        response.send(JSON.parse('{ "speech": "' + result.data.args.response + ' Comment puis-je vous aider maintenant ?", "displayText": "' + result.data.args.response + '"}'));
+        setTimeout(() = > {ws5.close(console.log(("closed")))},5000);
+
+    });
+
+    } else if (~query.indexOf("Living") || ~query.indexOf("light")) { //CASE OF DISCUSSION
+        const ws6 = new WebSocket(`${diaSock}:443`, {
+            rejectUnauthorized: false
+        });
+        ws6.on('open', function open() {
+            console.log("websocket opened");
+            var json = {
+                type: "googlehome",
+                data: {
+                    action: "send_request",
+                    args: {
+                        request: "Living light state"
+                    }
+                }
+            };
+            ws6.send(JSON.stringify(json));
+
+        });
+        ws6.on('message', (data) = > {
+            console.log("ws2 : " + data);
+        var result = JSON.parse(data);
+        console.log(result);
+        console.log(result.data.args.response);
+        response.send(JSON.parse('{ "speech": "' + result.data.args.response + ' Comment puis-je vous aider maintenant ?", "displayText": "' + result.data.args.response + '"}'));
+        setTimeout(() = > {ws6.close(console.log(("closed")))},5000);
+
+    });
+    }else {
       response.send(JSON.parse('{ "speech": "Je n\'ai pas compris. Pouvez vous reformuler votre demande ?", "displayText": "Je n\'ai pas compris. Pouvez vous reformuler votre demande ?"}'));
     }
 });
