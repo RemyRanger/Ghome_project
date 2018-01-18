@@ -38,9 +38,8 @@ ws2.on('close', function close() {
 
 function closeSocket(ws2){
     ws2.close();
-    console.log(ping)
     clearInterval(ping);
-    console.log(ping)
+    console.log('ws2 closed')
 };
 
 function filter(data){
