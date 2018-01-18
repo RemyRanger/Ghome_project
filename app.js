@@ -14,9 +14,7 @@ const options = {
 
 
 const diaSock = 'wss://appartement:appartement@diasuitebox-jvm2.bordeaux.inria.fr/userbox/ws?keepalive=client';
-const ws2 = new WebSocket(`${diaSock}:443`, {
-    rejectUnauthorized: false
-});
+
 
 
 function filter(data){
@@ -90,6 +88,9 @@ app.post('/api', function(req, response) {
 
       response.send(JSON.parse('{ "speech": "Très bien ! J\'ai récupéré le formulaire de test, nous allons commencer. '+ rep +'" , "displayText": "Très bien ! J\'ai récupéré le formulaire de test, nous allons commencer. '+ rep +'"}'));
     } else if (~query.indexOf("Inactivity") && ~query.indexOf("level")) { //CASE OF DISCUSSION
+        const ws2 = new WebSocket(`${diaSock}:443`, {
+            rejectUnauthorized: false
+        });
         ws2.on('open', function open () {
             console.log("websocket opened");
             var json = {
@@ -107,7 +108,7 @@ app.post('/api', function(req, response) {
 
             ws2.on('message', (data) => {
                 //console.log("ws2 : " + data);
-                filter(data);
+                //filter(data);
             var result = JSON.parse(data);
             console.log(result);
             console.log(result.data.args.response);
