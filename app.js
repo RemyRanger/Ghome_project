@@ -47,47 +47,47 @@ function IsJsonString(str) {
 function sockcom(req) {
     return new Promise((resolve, reject) => {
         var ping;
-    var res;
+        var res;
 
-    var ws2 = new WebSocket(diaSock, {
-        rejectUnauthorized: false
-    });
+        var ws2 = new WebSocket(diaSock, {
+            rejectUnauthorized: false
+        });
 
-    ws2.on('open', () => {
-        // console.log('sockcom open')
-        ws2.send("CLIENT:" + clientName, () => {
-        ping = setInterval(() => { ws2.send(pingValue) }, pingInterval);
-});
-    ws2.send(JSON.stringify(req));
-});
+        ws2.on('open', () => {
+            // console.log('sockcom open')
+            ws2.send("CLIENT:" + clientName, () => {
+                ping = setInterval(() => { ws2.send(pingValue) }, pingInterval);
+            });
+            ws2.send(JSON.stringify(req));
+        });
 
-    ws2.on('message', (data) => {
-        if (IsJsonString(data)) {
-        data = JSON.parse(data);
-        if(data.type.toString().trim() === clientName){
-            res = data;
-            setTimeout(() => {
-                clearInterval(ping);
-            ws2.close();
-        }, 1000)
-        }
-    }
-});
+        ws2.on('message', (data) => {
+            if (IsJsonString(data)) {
+                data = JSON.parse(data);
+                if (data.type.toString().trim() === clientName) {
+                    res = data;
+                    setTimeout(() => {
+                        clearInterval(ping);
+                        ws2.close();
+                    }, 1000)
+                }
+            }
+        });
 
-    ws2.on('close', () => {
-        // console.log('sockcom close')
-        if (res) {
-            resolve(res);
-        } else {
-            reject('No data')
+        ws2.on('close', () => {
+            // console.log('sockcom close')
+            if (res) {
+                resolve(res);
+            } else {
+                reject('No data')
+            }
+        });
+
+    })
 }
-});
-
-})
-}
 
 
-function socklisten(){
+function socklisten() {
     var ping;
 
     var ws2 = new WebSocket(diaSock, {
@@ -97,48 +97,48 @@ function socklisten(){
     ws2.on('open', () => {
         // console.log('sockcom open')
         ws2.send("CLIENT:" + clientName, () => {
-        ping = setInterval(() => { ws2.send(pingValue) }, pingInterval);
-});
-});
+            ping = setInterval(() => { ws2.send(pingValue) }, pingInterval);
+        });
+    });
 
     ws2.on('message', (data) => {
         if (IsJsonString(data)) {
-        data = JSON.parse(data);
-        if (data.type.toString().trim() === clientName && data.data.action.toString().trim() === 'send_form') {
-            console.log('sockListen new form: '+data);
+            data = JSON.parse(data);
+            if (data.type.toString().trim() === clientName && data.data.action.toString().trim() === 'send_form') {
+                console.log('sockListen new form: ' + data);
 
-            reference = data.data.args.form_url;
-            console.log("reference");
-            console.log(reference);
+                reference = data.data.args.form_url;
+                console.log("reference");
+                console.log(reference);
 
-            //LOAD QUEST FROM GFORMS
-            fs.readFile('client_secret.json', function processClientSecrets(err, content) {
-                var query = 'nothing';
-                if (err) {
-                    console.log('Error loading client secret file: ' + err);
-                    return;
-                }
-                // Authorize a client with the loaded credentials, then call the
-                // Google Apps Script Execution API.
-                authorize(JSON.parse(content), callAppsScript, reference);
-            });
+                //LOAD QUEST FROM GFORMS
+                fs.readFile('client_secret.json', function processClientSecrets(err, content) {
+                    var query = 'nothing';
+                    if (err) {
+                        console.log('Error loading client secret file: ' + err);
+                        return;
+                    }
+                    // Authorize a client with the loaded credentials, then call the
+                    // Google Apps Script Execution API.
+                    authorize(JSON.parse(content), callAppsScript, reference);
+                });
 
+            }
+        } else {
+            console.log('sockListen messsage : ' + data);
         }
-    }else{
-        console.log('sockListen messsage : '+data);
-    }
-});
+    });
 
     ws2.on('close', () => {
         try {
             ws2.close()
-        ws2 = new WebSocket(diaSock, {
-            rejectUnauthorized: false
-        });
-} catch (error) {
-        console.log('Connection to diaSuite lost')
-    }
-});
+            ws2 = new WebSocket(diaSock, {
+                rejectUnauthorized: false
+            });
+        } catch (error) {
+            console.log('Connection to diaSuite lost')
+        }
+    });
 }
 
 // If modifying these scopes, delete your previously saved credentials
@@ -167,7 +167,7 @@ app.set('formulaire', '0');
 
 
 //START DISCUSSION
-app.post('/api', function(req, response) {
+app.post('/api', function (req, response) {
     //GET MSG FROM GHOME
     var query = req.body.result.parameters.msg;
     console.log('From Google home:' + query);
@@ -177,21 +177,21 @@ app.post('/api', function(req, response) {
     var oui = 'oui';
     var questions = app.get('questions');
     //IF PROCESSING FORM
-    if (app.get('formulaire')=='1') {
-      if (~query.indexOf("quit") || ~query.indexOf("termin")) { //CASE OF DISCUSSION
-        response.send(JSON.parse('{ "speech": "Vous avez abandonné le formulaire. Retour au menu principal.", "displayText": "Vous avez abandonné le formulaire. Retour au menu principal."}'));
-        app.set('formulaire', '0');
-      } else {
-        processForm(query, response)
-      }
+    if (app.get('formulaire') == '1') {
+        if (~query.indexOf("quit") || ~query.indexOf("termin")) { //CASE OF DISCUSSION
+            response.send(JSON.parse('{ "speech": "Vous avez abandonné le formulaire. Retour au menu principal.", "displayText": "Vous avez abandonné le formulaire. Retour au menu principal."}'));
+            app.set('formulaire', '0');
+        } else {
+            processForm(query, response)
+        }
     } else if (~query.indexOf("remplir") && ~query.indexOf("formulaire")) { //CASE OF DISCUSSION
-      app.set('formulaire', '1');
-      for (var j = 0; j < questions.length; j++) {
-        app.set('response'+j, '0');
-      }
-      var rep = questions[0];
+        app.set('formulaire', '1');
+        for (var j = 0; j < questions.length; j++) {
+            app.set('response' + j, '0');
+        }
+        var rep = questions[0];
 
-      response.send(JSON.parse('{ "speech": "Très bien ! J\'ai récupéré le formulaire de test, nous allons commencer. '+ rep +'" , "displayText": "Très bien ! J\'ai récupéré le formulaire de test, nous allons commencer. '+ rep +'"}'));
+        response.send(JSON.parse('{ "speech": "Très bien ! J\'ai récupéré le formulaire de test, nous allons commencer. ' + rep + '" , "displayText": "Très bien ! J\'ai récupéré le formulaire de test, nous allons commencer. ' + rep + '"}'));
     } else if (~query.indexOf("Inactivity") && ~query.indexOf("level")) { //CASE OF DISCUSSION
 
         var diaData = {
@@ -205,8 +205,8 @@ app.post('/api', function(req, response) {
         };
         sockcom(diaData).then((res) => {
             console.log(res);
-        response.send(JSON.parse('{ "speech": "' + res.data.args.response + ' Comment puis-je vous aider maintenant ?", "displayText": "' + res.data.args.response + '"}'));
-    }, (err) => {
+            response.send(JSON.parse('{ "speech": "' + res.data.args.response + ' Comment puis-je vous aider maintenant ?", "displayText": "' + res.data.args.response + '"}'));
+        }, (err) => {
             console.log(err);
         });
     } else if (~query.indexOf("Bedroom") && ~query.indexOf("motion")) { //CASE OF DISCUSSION
@@ -222,11 +222,11 @@ app.post('/api', function(req, response) {
         };
         sockcom(diaData).then((res) => {
             console.log(res);
-        response.send(JSON.parse('{ "speech": "' + res.data.args.response + ' Comment puis-je vous aider maintenant ?", "displayText": "' + res.data.args.response + '"}'));
-    }, (err) => {
+            response.send(JSON.parse('{ "speech": "' + res.data.args.response + ' Comment puis-je vous aider maintenant ?", "displayText": "' + res.data.args.response + '"}'));
+        }, (err) => {
             console.log(err);
         });
-    } else if (~query.indexOf("Fridge")&& ~query.indexOf("door")) { //CASE OF DISCUSSION
+    } else if (~query.indexOf("Fridge") && ~query.indexOf("door")) { //CASE OF DISCUSSION
 
         var diaData = {
             type: clientName,
@@ -239,8 +239,8 @@ app.post('/api', function(req, response) {
         };
         sockcom(diaData).then((res) => {
             console.log(res);
-        response.send(JSON.parse('{ "speech": "' + res.data.args.response + ' Comment puis-je vous aider maintenant ?", "displayText": "' + res.data.args.response + '"}'));
-    }, (err) => {
+            response.send(JSON.parse('{ "speech": "' + res.data.args.response + ' Comment puis-je vous aider maintenant ?", "displayText": "' + res.data.args.response + '"}'));
+        }, (err) => {
             console.log(err);
         });
     } else if (~query.indexOf("Entrance") && ~query.indexOf("door")) { //CASE OF DISCUSSION
@@ -256,8 +256,8 @@ app.post('/api', function(req, response) {
         };
         sockcom(diaData).then((res) => {
             console.log(res);
-        response.send(JSON.parse('{ "speech": "' + res.data.args.response + ' Comment puis-je vous aider maintenant ?", "displayText": "' + res.data.args.response + '"}'));
-    }, (err) => {
+            response.send(JSON.parse('{ "speech": "' + res.data.args.response + ' Comment puis-je vous aider maintenant ?", "displayText": "' + res.data.args.response + '"}'));
+        }, (err) => {
             console.log(err);
         });
     } else if (~query.indexOf("Living") && ~query.indexOf("light")) { //CASE OF DISCUSSION
@@ -273,11 +273,11 @@ app.post('/api', function(req, response) {
         };
         sockcom(diaData).then((res) => {
             console.log(res);
-        response.send(JSON.parse('{ "speech": "' + res.data.args.response + ' Comment puis-je vous aider maintenant ?", "displayText": "' + res.data.args.response + '"}'));
-    }, (err) => {
+            response.send(JSON.parse('{ "speech": "' + res.data.args.response + ' Comment puis-je vous aider maintenant ?", "displayText": "' + res.data.args.response + '"}'));
+        }, (err) => {
             console.log(err);
         });
-    }else if (~query.indexOf("Last") && ~query.indexOf("monitored")) { //CASE OF DISCUSSION
+    } else if (~query.indexOf("Last") && ~query.indexOf("monitored")) { //CASE OF DISCUSSION
 
         var diaData = {
             type: clientName,
@@ -290,12 +290,12 @@ app.post('/api', function(req, response) {
         };
         sockcom(diaData).then((res) => {
             console.log(res);
-        response.send(JSON.parse('{ "speech": "' + res.data.args.response + ' Comment puis-je vous aider maintenant ?", "displayText": "' + res.data.args.response + '"}'));
-    }, (err) => {
+            response.send(JSON.parse('{ "speech": "' + res.data.args.response + ' Comment puis-je vous aider maintenant ?", "displayText": "' + res.data.args.response + '"}'));
+        }, (err) => {
             console.log(err);
         });
-    }else {
-      response.send(JSON.parse('{ "speech": "Je n\'ai pas compris. Pouvez vous reformuler votre demande ?", "displayText": "Je n\'ai pas compris. Pouvez vous reformuler votre demande ?"}'));
+    } else {
+        response.send(JSON.parse('{ "speech": "Je n\'ai pas compris. Pouvez vous reformuler votre demande ?", "displayText": "Je n\'ai pas compris. Pouvez vous reformuler votre demande ?"}'));
     }
 });
 
@@ -304,91 +304,105 @@ app.post('/api', function(req, response) {
 
 //USEFULL FUNCTIONS
 function processForm(query, response) {
-  //SET VAR
-  var questions = app.get('questions');
+    //SET VAR
+    var questions = app.get('questions');
 
-  //START DISCUSSION
-  for (var k = 0; k < questions.length; k++) {
-    console.log('val de k:'+k);
-    if (k==questions.length-1) {
-      if (~query.indexOf("question") && ~query.indexOf("suivante")) {
-        app.set('response'+k, 'Aucune Réponse');
-      } else if (~query.indexOf("question") && ~query.indexOf("précédente")) {
-        app.set('response'+(k-1), '0');
-        var rep = questions[k-1];
-        sendResponse(response, rep);
-        break;
-      } else {
-        app.set('response'+k, query);
-      }
-      console.log(app.get('response'+k));
+    //START DISCUSSION
+    for (var k = 0; k < questions.length; k++) {
+        console.log('val de k:' + k);
+        if (k == questions.length - 1) {
+            if (~query.indexOf("question") && ~query.indexOf("suivante")) {
+                app.set('response' + k, 'Aucune Réponse');
+            } else if (~query.indexOf("question") && ~query.indexOf("précédente")) {
+                app.set('response' + (k - 1), '0');
+                var rep = questions[k - 1];
+                sendResponse(response, rep);
+                break;
+            } else {
+                app.set('response' + k, query);
+            }
+            console.log(app.get('response' + k));
 
-      // Load client secrets from a local file.
-      fs.readFile('client_secret.json', function processClientSecrets(err, content) {
-          if (err) {
-              console.log('Error loading client secret file: ' + err);
-              return;
-          }
-          // Authorize a client with the loaded credentials, then call the
-          // Google Apps Script Execution API.
-          var myrep = [app.get('response0'), app.get('response1'), app.get('response2'), app.get('response3')];
-          authorize(JSON.parse(content), postFormulaire, myrep);
-      });
-      app.set('formulaire', '0');
-      response.send(JSON.parse('{ "speech": "Formulaire terminé. Que souhaitez vous faire maintenant ?", "displayText": "formualire terminé" }'));
-    } else if (app.get('response'+k)=='0' && k!=questions.length-1) {
-      console.log('val (2em boucle) de k:'+k);
-      //COMMAND PRECEDENT
-      if (~query.indexOf("question") && ~query.indexOf("précédente") && k>0) {
-        console.log('précédent détecté:'+k);
-        app.set('response'+(k-1), '0');
-        var rep = questions[k-1];
-        sendResponse(response, rep);
-        break;
-      } else if (~query.indexOf("question") && ~query.indexOf("précédente") && k==0) {
-        var rep = questions[k];
-        response.send(JSON.parse('{ "speech": "La commande n\'est pas valide. Retour à la question 1. '+ rep +'" , "displayText": "La commande n\'est pas valide. Retour à la question 1. '+ rep +'"}'));
-        break;
-      }
+            // Load client secrets from a local file.
+            fs.readFile('client_secret.json', function processClientSecrets(err, content) {
+                if (err) {
+                    console.log('Error loading client secret file: ' + err);
+                    return;
+                }
+                // Authorize a client with the loaded credentials, then call the
+                // Google Apps Script Execution API.
+                var myrep = [app.get('response0'), app.get('response1'), app.get('response2'), app.get('response3')];
+                authorize(JSON.parse(content), postFormulaire, myrep);
+                var diaData = {
+                    type: clientName,
+                    data: {
+                        action: "respond_to_form",
+                        args: {
+                            form_url: reference,
+                            response:myrep
+                        }
+                    }
+                };
+                sockcom(diaData).then(() => {
+                    console.log('Responses transmissent a diaSuite')
+                }, (err) => {
+                })
+            });
+            app.set('formulaire', '0');
+            response.send(JSON.parse('{ "speech": "Formulaire terminé. Que souhaitez vous faire maintenant ?", "displayText": "formualire terminé" }'));
+        } else if (app.get('response' + k) == '0' && k != questions.length - 1) {
+            console.log('val (2em boucle) de k:' + k);
+            //COMMAND PRECEDENT
+            if (~query.indexOf("question") && ~query.indexOf("précédente") && k > 0) {
+                console.log('précédent détecté:' + k);
+                app.set('response' + (k - 1), '0');
+                var rep = questions[k - 1];
+                sendResponse(response, rep);
+                break;
+            } else if (~query.indexOf("question") && ~query.indexOf("précédente") && k == 0) {
+                var rep = questions[k];
+                response.send(JSON.parse('{ "speech": "La commande n\'est pas valide. Retour à la question 1. ' + rep + '" , "displayText": "La commande n\'est pas valide. Retour à la question 1. ' + rep + '"}'));
+                break;
+            }
 
-      //COMMAND SUIVANT
-      if (~query.indexOf("question") && ~query.indexOf("suivante") && k<questions.length-1) {
-        console.log('suivante détecté:'+k);
-        app.set('response'+k, 'Aucune Réponse');
-        var rep = questions[k+1];
-        sendResponse(response, rep);
-        break;
-      }
+            //COMMAND SUIVANT
+            if (~query.indexOf("question") && ~query.indexOf("suivante") && k < questions.length - 1) {
+                console.log('suivante détecté:' + k);
+                app.set('response' + k, 'Aucune Réponse');
+                var rep = questions[k + 1];
+                sendResponse(response, rep);
+                break;
+            }
 
-      if (checkOuiNon(questions[k], query) == false) {
-        response.send(JSON.parse('{ "speech": "Votre réponse doit contenire un oui ou un non, veuillez reformuler.", "displayText": "Votre réponse doit contenire un oui ou un non, veuillez reformuler."}'));
-      } else {
-        app.set('response'+k, query);
-        console.log(app.get('response'+k));
-        var rep = questions[k+1];
-        sendResponse(response, rep);
-      }
-      break;
+            if (checkOuiNon(questions[k], query) == false) {
+                response.send(JSON.parse('{ "speech": "Votre réponse doit contenire un oui ou un non, veuillez reformuler.", "displayText": "Votre réponse doit contenire un oui ou un non, veuillez reformuler."}'));
+            } else {
+                app.set('response' + k, query);
+                console.log(app.get('response' + k));
+                var rep = questions[k + 1];
+                sendResponse(response, rep);
+            }
+            break;
+        }
     }
-  }
 }
 
 function sendResponse(response, question) {
     //REMOVE [F] FLAG
     if (~question.indexOf("[F]")) {
-      question = question.substring(3);
-      response.send(JSON.parse('{ "speech": "' + question + '", "displayText": "' + question + '"}'));
+        question = question.substring(3);
+        response.send(JSON.parse('{ "speech": "' + question + '", "displayText": "' + question + '"}'));
     } else {
-      response.send(JSON.parse('{ "speech": "' + question + '", "displayText": "' + question + '"}'));
+        response.send(JSON.parse('{ "speech": "' + question + '", "displayText": "' + question + '"}'));
     }
 }
 
 function checkOuiNon(question, reponse) {
     if (~question.indexOf("[F]")) {
-      if (~reponse.indexOf("oui") || ~reponse.indexOf("non")) {
-        return true;
-      }
-      return false;
+        if (~reponse.indexOf("oui") || ~reponse.indexOf("non")) {
+            return true;
+        }
+        return false;
     }
     return true;
 }
@@ -403,7 +417,7 @@ function authorize(credentials, callback, query) {
     var oauth2Client = new auth.OAuth2(clientId, clientSecret, redirectUrl);
 
     // Check if we have previously stored a token.
-    fs.readFile(TOKEN_PATH, function(err, token) {
+    fs.readFile(TOKEN_PATH, function (err, token) {
         if (err) {
             getNewToken(oauth2Client, callback, query);
         } else {
@@ -423,9 +437,9 @@ function getNewToken(oauth2Client, callback, query) {
         input: process.stdin,
         output: process.stdout
     });
-    rl.question('Enter the code from that page here: ', function(code) {
+    rl.question('Enter the code from that page here: ', function (code) {
         rl.close();
-        oauth2Client.getToken(code, function(err, token) {
+        oauth2Client.getToken(code, function (err, token) {
             if (err) {
                 console.log('Error while trying to retrieve access token', err);
                 return;
@@ -462,7 +476,7 @@ function callAppsScript(auth, query) {
             parameters: [input],
         },
         scriptId: scriptId
-    }, function(err, resp) {
+    }, function (err, resp) {
         if (err) {
             // The API encountered a problem before the script started executing.
             console.log('The API returned an error: ' + err);
@@ -481,10 +495,10 @@ function callAppsScript(auth, query) {
                 }
             }
         } else {
-            console.log('Questions handled:'+resp.response.result.questions);
-            console.log('Questions Size:'+resp.response.result.questions.length);
+            console.log('Questions handled:' + resp.response.result.questions);
+            console.log('Questions Size:' + resp.response.result.questions.length);
             for (var j = 0; j < resp.response.result.questions.length; j++) {
-              app.set('response'+j, '0');
+                app.set('response' + j, '0');
             }
             app.set('questions', resp.response.result.questions);
         }
@@ -505,7 +519,7 @@ function postFormulaire(auth, query) {
             parameters: [input],
         },
         scriptId: scriptId
-    }, function(err, resp) {
+    }, function (err, resp) {
         if (err) {
             // The API encountered a problem before the script started executing.
             console.log('The API returned an error: ' + err);
