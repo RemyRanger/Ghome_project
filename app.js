@@ -34,15 +34,6 @@ const clientName = 'googlehome';
 const pingInterval = 45000;
 const pingValue = 'PING:';
 
-var diaData = {
-    type: clientName,
-    data: {
-        action: "send_request",
-        args: {
-            request: "Inactivity level"
-        }
-    }
-};
 
 function IsJsonString(str) {
     try {
@@ -156,150 +147,84 @@ app.post('/api', function(req, response) {
 
       response.send(JSON.parse('{ "speech": "Très bien ! J\'ai récupéré le formulaire de test, nous allons commencer. '+ rep +'" , "displayText": "Très bien ! J\'ai récupéré le formulaire de test, nous allons commencer. '+ rep +'"}'));
     } else if (~query.indexOf("Inactivity") && ~query.indexOf("level")) { //CASE OF DISCUSSION
-       /* const ws2 = new WebSocket(`${diaSock}:443`, {
-            rejectUnauthorized: false
-        });
-        ws2.on('open', function open () {
-            console.log("websocket opened");
-            var json = {
-                type: "googlehome",
-                data:{
-                    action: "send_request",
-                    args: {
-                        request: "Inactivity level"
-                    }
+
+        var diaData = {
+            type: clientName,
+            data: {
+                action: "send_request",
+                args: {
+                    request: "Inactivity level"
                 }
-            };
-            ws2.send(JSON.stringify(json));
-
-        });
-
-            ws2.on('message', (data) => {
-                //console.log("ws2 : " + data);
-                //filter(data);
-            var result = JSON.parse(data);
-            console.log(result);
-            console.log(result.data.args.response);
-            response.send(JSON.parse('{ "speech": "'+ result.data.args.response + ' Comment puis-je vous aider maintenant ?", "displayText": "'+ result.data.args.response + '"}'));
-
-            setTimeout(() =>{ws2.close(console.log(("closed")))},5000);
-        });*/
+            }
+        };
         sockcom(diaData).then((res) => {
             console.log(res);
         response.send(JSON.parse('{ "speech": "' + res.data.args.response + ' Comment puis-je vous aider maintenant ?", "displayText": "' + res.data.args.response + '"}'));
     }, (err) => {
             console.log(err);
         });
-
-
-
     } else if (~query.indexOf("Bedroom") && ~query.indexOf("motion")) { //CASE OF DISCUSSION
-        const ws3 = new WebSocket(`${diaSock}:443`, {
-            rejectUnauthorized: false
-        });
-        ws3.on('open', function open () {
-            console.log("websocket opened");
-            var json = {
-                type: "googlehome",
-                data:{
-                    action: "send_request",
-                    args: {
-                        request: "Bedroom motion detector state"
-                    }
-                }
-            };
-            ws3.send(JSON.stringify(json));
 
+        var diaData = {
+            type: clientName,
+            data: {
+                action: "send_request",
+                args: {
+                    request: "Inactivity level"
+                }
+            }
+        };
+        sockcom(diaData).then((res) => {
+            console.log(res);
+        response.send(JSON.parse('{ "speech": "' + res.data.args.response + ' Comment puis-je vous aider maintenant ?", "displayText": "' + res.data.args.response + '"}'));
+    }, (err) => {
+            console.log(err);
         });
-        ws3.on('message', (data) => {
-            console.log("ws2 : " + data);
-        var result = JSON.parse(data);
-        console.log(result);
-        console.log(result.data.args.response);
-        response.send(JSON.parse('{ "speech": "'+ result.data.args.response + ' Comment puis-je vous aider maintenant ?", "displayText": "'+ result.data.args.response + '"}'));
-        setTimeout(() =>{ws3.close(console.log(("closed")))},5000);
-    });
     } else if (~query.indexOf("Fridge")&& ~query.indexOf("door")) { //CASE OF DISCUSSION
-        const ws4 = new WebSocket(`${diaSock}:443`, {
-            rejectUnauthorized: false
-        });
-        ws4.on('open', function open () {
-            console.log("websocket opened");
-            var json = {
-                type: "googlehome",
-                data:{
-                    action: "send_request",
-                    args: {
-                        request: "Fridge door contact sensor state"
-                    }
-                }
-            };
-            ws4.send(JSON.stringify(json));
 
+        var diaData = {
+            type: clientName,
+            data: {
+                action: "send_request",
+                args: {
+                    request: "Inactivity level"
+                }
+            }
+        };
+        sockcom(diaData).then((res) => {
+            console.log(res);
+        response.send(JSON.parse('{ "speech": "' + res.data.args.response + ' Comment puis-je vous aider maintenant ?", "displayText": "' + res.data.args.response + '"}'));
+    }, (err) => {
+            console.log(err);
         });
-        ws4.on('message', (data) => {
-            console.log("ws2 : " + data);
-        var result = JSON.parse(data);
-        console.log(result);
-        console.log(result.data.args.response);
-        response.send(JSON.parse('{ "speech": "' + result.data.args.response + ' Comment puis-je vous aider maintenant ?", "displayText": "' + result.data.args.response + '"}'));
-        setTimeout(() => {ws4.close(console.log(("closed")))},5000)        ;
-    });
     } else if (~query.indexOf("Entrance") && ~query.indexOf("door")) { //CASE OF DISCUSSION
-            const ws5 = new WebSocket(`${diaSock}:443`, {
-                rejectUnauthorized: false
-            });
-            ws5.on('open', function open () {
-                console.log("websocket opened");
-                var json = {
-                    type: "googlehome",
-                    data:{
-                        action: "send_request",
-                        args: {
-                            request: "Entrance door contact sensor state"
-                        }
-                    }
-                };
-                ws5.send(JSON.stringify(json));
 
-            });
-            ws5.on('message', (data) => {
-                console.log("ws2 : " + data);
-        var result = JSON.parse(data);
-        console.log(result);
-        console.log(result.data.args.response);
-        response.send(JSON.parse('{ "speech": "' + result.data.args.response + ' Comment puis-je vous aider maintenant ?", "displayText": "' + result.data.args.response + '"}'));
-        setTimeout(() => {ws5.close(console.log(("closed")))},5000);
-
-    });
-
-    } else if (~query.indexOf("Living") && ~query.indexOf("light")) { //CASE OF DISCUSSION
-        /*const ws6 = new WebSocket(`${diaSock}:443`, {
-            rejectUnauthorized: false
-        });
-        ws6.on('open', function open() {
-            console.log("websocket opened");
-            var json = {
-                type: "googlehome",
-                data: {
-                    action: "send_request",
-                    args: {
-                        request: "Living light state"
-                    }
+        var diaData = {
+            type: clientName,
+            data: {
+                action: "send_request",
+                args: {
+                    request: "Inactivity level"
                 }
-            };
-            ws6.send(JSON.stringify(json));
-
+            }
+        };
+        sockcom(diaData).then((res) => {
+            console.log(res);
+        response.send(JSON.parse('{ "speech": "' + res.data.args.response + ' Comment puis-je vous aider maintenant ?", "displayText": "' + res.data.args.response + '"}'));
+    }, (err) => {
+            console.log(err);
         });
-        ws6.on('message', (data) => {
-            console.log("ws2 : " + data);
-        var result = JSON.parse(data);
-        console.log(result);
-        console.log(result.data.args.response);
-        response.send(JSON.parse('{ "speech": "' + result.data.args.response + ' Comment puis-je vous aider maintenant ?", "displayText": "' + result.data.args.response + '"}'));
-        setTimeout(() => {ws6.close(console.log(("closed")))},5000);
+    } else if (~query.indexOf("Living") && ~query.indexOf("light")) { //CASE OF DISCUSSION
 
-    });*/
+        var diaData = {
+            type: clientName,
+            data: {
+                action: "send_request",
+                args: {
+                    request: "Inactivity level"
+                }
+            }
+        };
         sockcom(diaData).then((res) => {
             console.log(res);
         response.send(JSON.parse('{ "speech": "' + res.data.args.response + ' Comment puis-je vous aider maintenant ?", "displayText": "' + res.data.args.response + '"}'));
@@ -307,31 +232,21 @@ app.post('/api', function(req, response) {
             console.log(err);
         });
     }else if (~query.indexOf("Last") && ~query.indexOf("monitored")) { //CASE OF DISCUSSION
-        const ws1 = new WebSocket(`${diaSock}:443`, {
-            rejectUnauthorized: false
-        });
-        ws1.on('open', function open() {
-            console.log("websocket opened");
-            var json = {
-                type: "googlehome",
-                data: {
-                    action: "send_request",
-                    args: {
-                        request: "Last monitored action"
-                    }
+
+        var diaData = {
+            type: clientName,
+            data: {
+                action: "send_request",
+                args: {
+                    request: "Last monitored action"
                 }
-            };
-            ws1.send(JSON.stringify(json));
-
-        });
-        ws1.on('message', (data) => {
-            console.log("ws2 : " + data);
-        var result = JSON.parse(data);
-        console.log(result);
-        console.log(result.data.args.response);
-        response.send(JSON.parse('{ "speech": "' + result.data.args.response + ' Comment puis-je vous aider maintenant ?", "displayText": "' + result.data.args.response + '"}'));
-        setTimeout(() => {ws1.close(console.log(("closed")))},5000);
-
+            }
+        };
+        sockcom(diaData).then((res) => {
+            console.log(res);
+        response.send(JSON.parse('{ "speech": "' + res.data.args.response + ' Comment puis-je vous aider maintenant ?", "displayText": "' + res.data.args.response + '"}'));
+    }, (err) => {
+            console.log(err);
         });
     }else {
       response.send(JSON.parse('{ "speech": "Je n\'ai pas compris. Pouvez vous reformuler votre demande ?", "displayText": "Je n\'ai pas compris. Pouvez vous reformuler votre demande ?"}'));
