@@ -120,7 +120,10 @@ app.post('/api', function(req, response) {
 
 
     } else if (~query.indexOf("Bedroom") && ~query.indexOf("motion")) { //CASE OF DISCUSSION
-        ws2.on('open', function open () {
+        const ws3 = new WebSocket(`${diaSock}:443`, {
+            rejectUnauthorized: false
+        });
+        ws3.on('open', function open () {
             console.log("websocket opened");
             var json = {
                 type: "googlehome",
@@ -131,16 +134,16 @@ app.post('/api', function(req, response) {
                     }
                 }
             };
-            ws2.send(JSON.stringify(json));
+            ws3.send(JSON.stringify(json));
 
         });
-        ws2.on('message', (data) => {
+        ws3.on('message', (data) => {
             console.log("ws2 : " + data);
         var result = JSON.parse(data);
         console.log(result);
         console.log(result.data.args.response);
         response.send(JSON.parse('{ "speech": "'+ result.data.args.response + ' Comment puis-je vous aider maintenant ?", "displayText": "'+ result.data.args.response + '"}'));
-        setTimeout(() =>{ws2.close(console.log(("closed")))},5000);
+        setTimeout(() =>{ws3.close(console.log(("closed")))},5000);
     });
     } else if (~query.indexOf("merci")) { //CASE OF DISCUSSION
       response.send(JSON.parse('{ "speech": "Je suis ravi de vous avoir aidé. Avez vous d\'autres questions ?", "displayText": "Je suis ravi de vous avoir aidé. Avez vous d\'autres questions ?"}'));
