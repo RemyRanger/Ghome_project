@@ -17,12 +17,9 @@ const diaSock = 'wss://appartement:appartement@diasuitebox-jvm2.bordeaux.inria.f
 const ws2 = new WebSocket(`${diaSock}:443`, {
     rejectUnauthorized: false
 });
-ws2.on('open', function open () {
-    console.log("websocket opened");
 
-});
 
-setInterval((ws2.send("PING")),30000);
+//setInterval((ws2.send("PING")),30000);
 
 // If modifying these scopes, delete your previously saved credentials
 // at ~/.credentials/script-nodejs-quickstart.json
@@ -85,6 +82,8 @@ app.post('/api', function(req, response) {
 
       response.send(JSON.parse('{ "speech": "Très bien ! J\'ai récupéré le formulaire de test, nous allons commencer. '+ rep +'" , "displayText": "Très bien ! J\'ai récupéré le formulaire de test, nous allons commencer. '+ rep +'"}'));
     } else if (~query.indexOf("Inactivity") && ~query.indexOf("level")) { //CASE OF DISCUSSION
+        ws2.on('open', function open () {
+            console.log("websocket opened");
             var json = {
                 type: "googlehome",
                 data:{
@@ -95,35 +94,43 @@ app.post('/api', function(req, response) {
                 }
             };
             ws2.send(JSON.stringify(json));
+
+        });
+
             ws2.on('message', (data) => {
                 console.log("ws2 : " + data);
             var result = JSON.parse(data);
             console.log(result);
             console.log(result.data.args.response);
             response.send(JSON.parse('{ "speech": "'+ result.data.args.response + ' Comment puis-je vous aider maintenant ?", "displayText": "'+ result.data.args.response + '"}'));
+
+            setTimeout(() =>{ws2.close()},2000);
         });
-           /* ws2.on('close', (data) => {
-                console.log("ws2 close: " + data);
-        });*/
+
 
 
     } else if (~query.indexOf("Bedroom") && ~query.indexOf("motion")) { //CASE OF DISCUSSION
-        var json = {
-            type: "googlehome",
-            data:{
-                action: "send_request",
-                args: {
-                    request: "Bedroom motion detector state"
+        ws2.on('open', function open () {
+            console.log("websocket opened");
+            var json = {
+                type: "googlehome",
+                data:{
+                    action: "send_request",
+                    args: {
+                        request: "Bedroom motion detector state"
+                    }
                 }
-            }
-        };
-        ws2.send(JSON.stringify(json));
+            };
+            ws2.send(JSON.stringify(json));
+
+        });
         ws2.on('message', (data) => {
             console.log("ws2 : " + data);
         var result = JSON.parse(data);
         console.log(result);
         console.log(result.data.args.response);
         response.send(JSON.parse('{ "speech": "'+ result.data.args.response + ' Comment puis-je vous aider maintenant ?", "displayText": "'+ result.data.args.response + '"}'));
+        setTimeout(() =>{ws2.close()},2000);
     });
     } else if (~query.indexOf("merci")) { //CASE OF DISCUSSION
       response.send(JSON.parse('{ "speech": "Je suis ravi de vous avoir aidé. Avez vous d\'autres questions ?", "displayText": "Je suis ravi de vous avoir aidé. Avez vous d\'autres questions ?"}'));
