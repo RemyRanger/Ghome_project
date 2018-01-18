@@ -7,7 +7,7 @@ var googleAuth = require('google-auth-library');
 const https = require('https');
 const WebSocket = require('ws');
 
-
+var reference;
 
 /*
 const options = {
@@ -86,6 +86,48 @@ function sockcom(req) {
 })
 }
 
+
+function socklisten(){
+    var ping;
+
+    var ws2 = new WebSocket(diaSock, {
+        rejectUnauthorized: false
+    });
+
+    ws2.on('open', () => {
+        // console.log('sockcom open')
+        ws2.send("CLIENT:" + clientName, () => {
+        ping = setInterval(() => { ws2.send(pingValue) }, pingInterval);
+});
+});
+
+    ws2.on('message', (data) => {
+        if (IsJsonString(data)) {
+        data = JSON.parse(data);
+        if (data.type.toString().trim() === clientName && data.data.action.toString().trim() === 'send_form') {
+            console.log('sockListen new form: '+data);
+            reference = data.args.response;
+            console.log("reference");
+            console.log(reference);
+
+        }
+    }else{
+        console.log('sockListen messsage : '+data);
+    }
+});
+
+    ws2.on('close', () => {
+        try {
+            ws2.close()
+        ws2 = new WebSocket(diaSock, {
+            rejectUnauthorized: false
+        });
+} catch (error) {
+        console.log('Connection to diaSuite lost')
+    }
+});
+}
+
 // If modifying these scopes, delete your previously saved credentials
 // at ~/.credentials/script-nodejs-quickstart.json
 var SCOPES = ['https://www.googleapis.com/auth/forms', 'https://www.googleapis.com/auth/cloud-platform', 'https://www.googleapis.com/auth/drive', 'https://www.googleapis.com/auth/servicecontrol', 'https://www.googleapis.com/auth/service.management'];
@@ -101,7 +143,8 @@ var app = express();
 // RUNNING SERVER
 var port = 80;
 app.listen(port);
-
+//listen form ref
+socklisten();
 //USE JSON FORMAT
 app.use(bodyParser.json());
 
