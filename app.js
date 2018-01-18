@@ -115,7 +115,7 @@ app.post('/api', function(req, response) {
             var result = JSON.parse(data);
             console.log(result);
             console.log(result.data.args.response);
-            response.send(JSON.parse('{ "speech": "L\'inactivity level '+ result.data.args.response + '" Comment puis-je vous aider maintenant ?", "displayText": "Aujourd\'hui, vous avez fait 5768 pas."}'));
+            response.send(JSON.parse('{ "speech": "'+ result.data.args.response + ' Comment puis-je vous aider maintenant ?", "displayText": "Aujourd\'hui, vous avez fait 5768 pas."}'));
         });
             ws2.on('close', (data) => {
                 console.log("ws2 close: " + data);
