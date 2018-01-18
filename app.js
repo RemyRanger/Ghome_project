@@ -2,9 +2,28 @@ var fs = require('fs');
 var readline = require('readline');
 var google = require('googleapis');
 var googleAuth = require('google-auth-library');
+
+// WEBSOCKET
 const https = require('https');
 const socket = require('socket');
 const WebSocket = require('ws');
+
+const options = {
+    cert: fs.readFileSync('./https/server.crt'),
+    key: fs.readFileSync('./https/server.key')
+};
+const port = 8000;
+const server = https.createServer(options);
+
+const diaSock = 'wss://appartement:appartement@diasuitebox-jvm2.bordeaux.inria.fr/userbox/ws?keepalive=client';
+const wss = new WebSocket.Server({ server });
+wss.on('connection', function connection (ws) {
+    console.log('new connection')
+    ws.on('message', function message (msg) {
+        console.log(msg);
+    });
+});
+
 
 // If modifying these scopes, delete your previously saved credentials
 // at ~/.credentials/script-nodejs-quickstart.json
@@ -66,8 +85,41 @@ app.post('/api', function(req, response) {
       var rep = questions[0];
 
       response.send(JSON.parse('{ "speech": "Très bien ! J\'ai récupéré le formulaire de test, nous allons commencer. '+ rep +'" , "displayText": "Très bien ! J\'ai récupéré le formulaire de test, nous allons commencer. '+ rep +'"}'));
-    } else if (~query.indexOf("nombre") && ~query.indexOf("pas")) { //CASE OF DISCUSSION
-      response.send(JSON.parse('{ "speech": "D\'après les informations récupérées. Aujourd\'hui, vous avez fait 5768 pas. Comment puis-je vous aider maintenant ?", "displayText": "Aujourd\'hui, vous avez fait 5768 pas."}'));
+    } else if (~query.indexOf("Inactivity") && ~query.indexOf("level")) { //CASE OF DISCUSSION
+        server.listen(port, function listening () {
+            //
+            // If the `rejectUnauthorized` option is not `false`, the server certificate
+            // is verified against a list of well-known CAs. An 'error' event is emitted
+            // if verification fails.
+            // The certificate used in this example is self-signed so `rejectUnauthorized`
+            // is set to `false`.
+            //
+            const ws2 = new WebSocket(`${diaSock}:443`, {
+                rejectUnauthorized: false
+            });
+
+            ws2.on('open', function open () {
+                var json = {
+                    type: "googlehome",
+                    data:{
+                        action: "send_request",
+                        args: {
+                            request: "Inactivity level"
+                        }
+                    }
+                };
+                ws2.send(JSON.stringify(json));
+            });
+            ws2.on('message', (data) => {
+                console.log("ws2 : " + data);
+            response.send(JSON.parse('{ "speech": "L\'inactivity level est de " + '+ data + ". Comment puis-je vous aider maintenant ?", "displayText": "Aujourd\'hui, vous avez fait 5768 pas."}'));
+        });
+            ws2.on('close', (data) => {
+                console.log("ws2 close: " + data);
+        });
+
+        });
+
     } else if (~query.indexOf("emploi") && ~query.indexOf("temps")) { //CASE OF DISCUSSION
       response.send(JSON.parse('{ "speech": "D\'après les informations récupérées. Aujourd\'hui, vous avez un cours à 14 heure avec Monsieur Consel. Que souhaitez-vous maintenant ?", "displayText": "Aujourd\'hui, vous avez un cours à 14 heure avec Monsieur Consel."}'));
     } else if (~query.indexOf("merci")) { //CASE OF DISCUSSION

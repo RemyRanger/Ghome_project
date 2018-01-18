@@ -26,7 +26,6 @@ server.listen(port, function listening () {
   // If the `rejectUnauthorized` option is not `false`, the server certificate
   // is verified against a list of well-known CAs. An 'error' event is emitted
   // if verification fails.
-  //
   // The certificate used in this example is self-signed so `rejectUnauthorized`
   // is set to `false`.
   //
@@ -48,6 +47,9 @@ server.listen(port, function listening () {
   });
   ws2.on('message', (data) => {
     console.log("ws2 : " + data);
+  });
+  ws2.on('close', (data) => {
+    console.log("ws2 close: " + data);
   });
 
 });
