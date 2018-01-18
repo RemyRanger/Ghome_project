@@ -15,7 +15,7 @@ const options = {
 const port2 = 8000;
 const server = https.createServer(options);
 
-const diaSock = 'wss://appartement:appartement@diasuitebox-jvm2.bordeaux.inria.fr/userbox/ws:443?keepalive=client';
+const diaSock = 'wss://appartement:appartement@diasuitebox-jvm2.bordeaux.inria.fr/userbox/ws?keepalive=client';
 const wss = new WebSocket.Server({ server });
 wss.on('connection', function connection (ws) {
     console.log('new connection')
@@ -94,7 +94,7 @@ app.post('/api', function(req, response) {
             // The certificate used in this example is self-signed so `rejectUnauthorized`
             // is set to `false`.
             //
-            const ws2 = new WebSocket(diaSock, {
+            const ws2 = new WebSocket(`${diaSock}:443`, {
                 rejectUnauthorized: false
             });
 
