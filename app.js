@@ -170,7 +170,7 @@ app.post('/api', function(req, response) {
             data: {
                 action: "send_request",
                 args: {
-                    request: "Inactivity level"
+                    request: "Bedroom motion detector state"
                 }
             }
         };
@@ -187,7 +187,7 @@ app.post('/api', function(req, response) {
             data: {
                 action: "send_request",
                 args: {
-                    request: "Inactivity level"
+                    request: "Fridge door contact sensor state"
                 }
             }
         };
@@ -204,7 +204,7 @@ app.post('/api', function(req, response) {
             data: {
                 action: "send_request",
                 args: {
-                    request: "Inactivity level"
+                    request: "Entrance door contact sensor state "
                 }
             }
         };
@@ -221,7 +221,7 @@ app.post('/api', function(req, response) {
             data: {
                 action: "send_request",
                 args: {
-                    request: "Inactivity level"
+                    request: "Living light state"
                 }
             }
         };
