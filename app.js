@@ -5,7 +5,7 @@ var googleAuth = require('google-auth-library');
 
 // WEBSOCKET
 const https = require('https');
-const socket = require('socket');
+//const socket = require('socket');
 const WebSocket = require('ws');
 
 const options = {
