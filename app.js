@@ -114,7 +114,6 @@ app.post('/api', function(req, response) {
                 console.log("ws2 : " + data);
             var result = JSON.parse(data);
             console.log(result);
-            console.log(typeof test);
             console.log(result.data.args.response);
             response.send(JSON.parse('{ "speech": "L\'inactivity level '+ result.data.args.response + '" Comment puis-je vous aider maintenant ?", "displayText": "Aujourd\'hui, vous avez fait 5768 pas."}'));
         });
