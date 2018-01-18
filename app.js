@@ -106,7 +106,7 @@ function socklisten(){
         data = JSON.parse(data);
         if (data.type.toString().trim() === clientName && data.data.action.toString().trim() === 'send_form') {
             console.log('sockListen new form: '+data);
-            reference = data.args.response;
+            reference = data.args.form_url;
             console.log("reference");
             console.log(reference);
 
