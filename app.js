@@ -192,7 +192,7 @@ app.post('/api', function (req, response) {
         var rep = questions[0];
 
         response.send(JSON.parse('{ "speech": "Très bien ! J\'ai récupéré le formulaire de test, nous allons commencer. ' + rep + '" , "displayText": "Très bien ! J\'ai récupéré le formulaire de test, nous allons commencer. ' + rep + '"}'));
-    } else if (~query.indexOf("Inactivity") && ~query.indexOf("level")) { //CASE OF DISCUSSION
+    } else if (~query.indexOf("inactivité") && ~query.indexOf("niveau")) { //CASE OF DISCUSSION
 
         var diaData = {
             type: clientName,
@@ -209,7 +209,7 @@ app.post('/api', function (req, response) {
         }, (err) => {
             console.log(err);
         });
-    } else if (~query.indexOf("Bedroom") && ~query.indexOf("motion")) { //CASE OF DISCUSSION
+    } else if (~query.indexOf("chambre") && ~query.indexOf("mouvement")) { //CASE OF DISCUSSION
 
         var diaData = {
             type: clientName,
@@ -226,7 +226,7 @@ app.post('/api', function (req, response) {
         }, (err) => {
             console.log(err);
         });
-    } else if (~query.indexOf("Fridge") && ~query.indexOf("door")) { //CASE OF DISCUSSION
+    } else if (~query.indexOf("frig") && ~query.indexOf("porte")) { //CASE OF DISCUSSION
 
         var diaData = {
             type: clientName,
@@ -243,7 +243,7 @@ app.post('/api', function (req, response) {
         }, (err) => {
             console.log(err);
         });
-    } else if (~query.indexOf("Entrance") && ~query.indexOf("door")) { //CASE OF DISCUSSION
+    } else if (~query.indexOf("entrée") && ~query.indexOf("porte")) { //CASE OF DISCUSSION
 
         var diaData = {
             type: clientName,
@@ -260,7 +260,7 @@ app.post('/api', function (req, response) {
         }, (err) => {
             console.log(err);
         });
-    } else if (~query.indexOf("Living") && ~query.indexOf("light")) { //CASE OF DISCUSSION
+    } else if (~query.indexOf("salon") && ~query.indexOf("lumière")) { //CASE OF DISCUSSION
 
         var diaData = {
             type: clientName,
@@ -277,7 +277,7 @@ app.post('/api', function (req, response) {
         }, (err) => {
             console.log(err);
         });
-    } else if (~query.indexOf("Last") && ~query.indexOf("monitored")) { //CASE OF DISCUSSION
+    } else if (~query.indexOf("dernière") && ~query.indexOf("activité")) { //CASE OF DISCUSSION
 
         var diaData = {
             type: clientName,
@@ -517,7 +517,7 @@ function postFormulaire(auth, query) {
         auth: auth,
         resource: {
             function: 'postForm',
-            parameters: [input],
+            parameters: [input, reference],
         },
         scriptId: scriptId
     }, function (err, resp) {
