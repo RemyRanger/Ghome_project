@@ -52,6 +52,8 @@ wss.on('connection', function connection (ws) {
     console.log(test);
     console.log(typeof test);
     console.log(test.data.args.response);
+
+    setTimeout(() =>{ws2.close(console.log(("closed")))},2000);
     //console.log("ws2 : " + JSON.parse(data.args.response));
 
   });
