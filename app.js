@@ -86,7 +86,6 @@ function sockcom(req) {
     })
 }
 
-
 function socklisten() {
     var ping;
     var diaData = {
@@ -201,7 +200,7 @@ app.post('/api', function (req, response) {
         var rep = questions[0];
 
         response.send(JSON.parse('{ "speech": "Très bien ! J\'ai récupéré le formulaire de test, nous allons commencer. ' + rep + '" , "displayText": "Très bien ! J\'ai récupéré le formulaire de test, nous allons commencer. ' + rep + '"}'));
-    } else if (~query.indexOf("Inactivity") && ~query.indexOf("level")) { //CASE OF DISCUSSION
+    } else if (~query.indexOf("inactivité") && ~query.indexOf("niveau")) { //CASE OF DISCUSSION
 
         var diaData = {
             type: clientName,
@@ -218,7 +217,7 @@ app.post('/api', function (req, response) {
         }, (err) => {
             console.log(err);
         });
-    } else if (~query.indexOf("Bedroom") && ~query.indexOf("motion")) { //CASE OF DISCUSSION
+    } else if (~query.indexOf("chambre") && ~query.indexOf("mouvement")) { //CASE OF DISCUSSION
 
         var diaData = {
             type: clientName,
@@ -235,7 +234,7 @@ app.post('/api', function (req, response) {
         }, (err) => {
             console.log(err);
         });
-    } else if (~query.indexOf("Fridge") && ~query.indexOf("door")) { //CASE OF DISCUSSION
+    } else if (~query.indexOf("frig") && ~query.indexOf("porte")) { //CASE OF DISCUSSION
 
         var diaData = {
             type: clientName,
@@ -252,7 +251,7 @@ app.post('/api', function (req, response) {
         }, (err) => {
             console.log(err);
         });
-    } else if (~query.indexOf("Entrance") && ~query.indexOf("door")) { //CASE OF DISCUSSION
+    } else if (~query.indexOf("entrée") && ~query.indexOf("porte")) { //CASE OF DISCUSSION
 
         var diaData = {
             type: clientName,
@@ -269,7 +268,7 @@ app.post('/api', function (req, response) {
         }, (err) => {
             console.log(err);
         });
-    } else if (~query.indexOf("Living") && ~query.indexOf("light")) { //CASE OF DISCUSSION
+    } else if (~query.indexOf("salon") && ~query.indexOf("lumière")) { //CASE OF DISCUSSION
 
         var diaData = {
             type: clientName,
@@ -286,7 +285,7 @@ app.post('/api', function (req, response) {
         }, (err) => {
             console.log(err);
         });
-    } else if (~query.indexOf("Last") && ~query.indexOf("monitored")) { //CASE OF DISCUSSION
+    } else if (~query.indexOf("dernière") && ~query.indexOf("activité")) { //CASE OF DISCUSSION
 
         var diaData = {
             type: clientName,
@@ -303,9 +302,13 @@ app.post('/api', function (req, response) {
         }, (err) => {
             console.log(err);
         });
+    } else if (~query.indexOf("merci")) { //CASE OF DISCUSSION
+      response.send(JSON.parse('{ "speech": "Je suis ravi de vous avoir aidé. Avez vous d\'autres questions ?", "displayText": "Je suis ravi de vous avoir aidé. Avez vous d\'autres questions ?"}'));
+    } else if (~query.indexOf("quit") || ~query.indexOf("termin")) { //CASE OF DISCUSSION
+      response.send(JSON.parse('{ "speech": "Je vous souhaite une agréable journé !", "displayText": "Je vous souhaite une agréable journé !", "data": { "google": {"expect_user_response": false}}}'));
     } else {
-        response.send(JSON.parse('{ "speech": "Je n\'ai pas compris. Pouvez vous reformuler votre demande ?", "displayText": "Je n\'ai pas compris. Pouvez vous reformuler votre demande ?"}'));
-    }
+      response.send(JSON.parse('{ "speech": "Je n\'ai pas compris. Pouvez vous reformuler votre demande ?", "displayText": "Je n\'ai pas compris. Pouvez vous reformuler votre demande ?"}'));
+}
 });
 
 // response.send(JSON.parse('{ "speech": "Formulaire terminé", "displayText": "formualire terminé", "data": { "google": {"expect_user_response": false}}}'));
@@ -526,7 +529,7 @@ function postFormulaire(auth, query) {
         auth: auth,
         resource: {
             function: 'postForm',
-            parameters: [input],
+            parameters: [input, reference],
         },
         scriptId: scriptId
     }, function (err, resp) {
