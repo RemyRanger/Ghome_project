@@ -89,7 +89,15 @@ function sockcom(req) {
 
 function socklisten() {
     var ping;
-
+    var diaData = {
+        type: clientName,
+        data: {
+            action: "send_request",
+            args: {
+                request: "Inactivity level"
+            }
+        }
+    };
     var ws2 = new WebSocket(diaSock, {
         rejectUnauthorized: false
     });
@@ -98,6 +106,7 @@ function socklisten() {
         // console.log('sockcom open')
         ws2.send("CLIENT:" + clientName, () => {
             ping = setInterval(() => { ws2.send(pingValue) }, pingInterval);
+            ws2.send(JSON.stringify(diaData));
         });
     });
 
@@ -344,7 +353,7 @@ function processForm(query, response) {
                     }
                 };
                 sockcom(diaData).then(() => {
-                    console.log('Reponses transmissent a diaSuite')
+                    console.log('Reponses transmissent a diaSuite');
                 }, (err) => {
                     console.log(err);
                 })
