@@ -7,7 +7,7 @@ var googleAuth = require('google-auth-library');
 const https = require('https');
 const WebSocket = require('ws');
 
-var reference = "19P5_llTmXppC9dJT2bbO70FSUX1aWO1f4Ha0VLNZ7xM";
+var reference;
 
 /*
 const options = {
@@ -85,19 +85,6 @@ function sockcom(req) {
 
     })
 }
-
-//LOAD QUEST FROM GFORMS
-fs.readFile('client_secret.json', function processClientSecrets(err, content) {
-    var query = 'nothing';
-    if (err) {
-        console.log('Error loading client secret file: ' + err);
-        return;
-    }
-    // Authorize a client with the loaded credentials, then call the
-    // Google Apps Script Execution API.
-    authorize(JSON.parse(content), callAppsScript, reference);
-});
-
 
 function socklisten() {
     var ping;
