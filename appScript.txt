@@ -1,0 +1,42 @@
+function postForm(input, reference) {
+
+  var form = FormApp.openById(reference);
+  Logger.log("Posted to ref: " + reference); 
+  var questions = form.getItems();
+  var qt0 = questions[0].asTextItem();
+  var qr0 = qt0.createResponse(input[0]);
+  var qt1 = questions[1].asTextItem();
+  var qr1 = qt1.createResponse(input[1]);
+  var qt2 = questions[2].asTextItem();
+  var qr2 = qt2.createResponse(input[2]);
+  var qt3 = questions[3].asTextItem();
+  var qr3 = qt3.createResponse(input[3]);
+  var FormResponse = form.createResponse();
+  FormResponse.withItemResponse( qr0 );
+  FormResponse.withItemResponse( qr1 );
+  FormResponse.withItemResponse( qr2 );
+  FormResponse.withItemResponse( qr3 );
+  FormResponse.submit();
+  
+}
+
+function getQuestions(input) {
+  var form = FormApp.openById(input || "1R2WZXnyvdSBPAvTuLOkccEYbPOFhFOaOAmHAnWCHIck");
+  var items = form.getItems();
+  for(i=0; i<items.length; i++) {
+  Logger.log("Title: " + items[i].getTitle()); 
+  }
+  var data = {
+   'questions': [items[0].getTitle(), items[1].getTitle(), items[2].getTitle(), items[3].getTitle()],
+   'query': 'Questions récupérées'
+ };
+ var options = {
+   'method' : 'post',
+   'contentType': 'application/json',
+   // Convert the JavaScript object to a JSON string.
+   'payload' : JSON.stringify(data)
+ };
+ var payload = JSON.stringify(data);
+ Logger.log("Options: " + JSON.stringify(data)); 
+ return data;
+}
