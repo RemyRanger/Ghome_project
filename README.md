@@ -7,10 +7,10 @@ Server implementation of a Google Home/Dialogflow logic with a websocket connect
 5. FAQ
 
 ## Requirements
-### Environnement 
+### Environnement
 * NPM & git
 ```bash
-sudo apt install npm git -y 
+sudo apt install npm git -y
 ```
 * Node >8
 ```bash
