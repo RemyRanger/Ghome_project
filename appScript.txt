@@ -1,7 +1,9 @@
-function postForm(input, reference) {
+// Functions running on google cloud platform. Triggered by the node server.
 
+// Post answers in google form. Triggered by function postFormulaire in app.js
+function postForm(input, reference) {
   var form = FormApp.openById(reference);
-  Logger.log("Posted to ref: " + reference); 
+  Logger.log("Posted to ref: " + reference);
   var questions = form.getItems();
   var qt0 = questions[0].asTextItem();
   var qr0 = qt0.createResponse(input[0]);
@@ -17,14 +19,14 @@ function postForm(input, reference) {
   FormResponse.withItemResponse( qr2 );
   FormResponse.withItemResponse( qr3 );
   FormResponse.submit();
-  
 }
 
+// Retrieve questions from google form. Triggered by function callAppsScript in app.js
 function getQuestions(input) {
   var form = FormApp.openById(input || "1R2WZXnyvdSBPAvTuLOkccEYbPOFhFOaOAmHAnWCHIck");
   var items = form.getItems();
   for(i=0; i<items.length; i++) {
-  Logger.log("Title: " + items[i].getTitle()); 
+  Logger.log("Title: " + items[i].getTitle());
   }
   var data = {
    'questions': [items[0].getTitle(), items[1].getTitle(), items[2].getTitle(), items[3].getTitle()],
@@ -37,6 +39,6 @@ function getQuestions(input) {
    'payload' : JSON.stringify(data)
  };
  var payload = JSON.stringify(data);
- Logger.log("Options: " + JSON.stringify(data)); 
+ Logger.log("Options: " + JSON.stringify(data));
  return data;
 }
