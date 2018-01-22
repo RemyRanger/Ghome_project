@@ -6,4 +6,4 @@ https://github.com/websockets/ws#installing
 
 
 ## Link to gmail
-(https://developers.google.com/gmail/api/auth/web-server)
+[Pour modifier client_secret.json](https://developers.google.com/gmail/api/auth/web-server)
