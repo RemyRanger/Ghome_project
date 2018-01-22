@@ -4,14 +4,18 @@ var google = require('googleapis');
 var googleAuth = require('google-auth-library');
 
 // WEBSOCKET
+// ES6
 // const { sockcom, socklisten } = require('./sockets.js');
+// ES5
 var sockcom = require('./sockets.js').sockcom;
 var socklisten = require('./sockets.js').socklisten;
 
 const clientName = 'googlehome';
 
 // GOOGLE
+// ES6
 // const { processForm, sendResponse, checkOuiNon, getNewToken, storeToken, callAppsScript, prostFormulaire } = require('./google.js')
+// ES5
 var processForm = require('./google.js').processForm;
 var sendResponse = require('./google.js').sendResponse;
 var checkOuiNon = require('./google.js').checkOuiNon;
