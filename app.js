@@ -4,12 +4,21 @@ var google = require('googleapis');
 var googleAuth = require('google-auth-library');
 
 // WEBSOCKET
-const { sockcom, socklisten } = require('./sockets.js');
+// const { sockcom, socklisten } = require('./sockets.js');
+var sockcom = require('./sockets.js').sockcom;
+var socklisten = require('./sockets.js').socklisten;
+
 const clientName = 'googlehome';
 
 // GOOGLE
-const { processForm, sendResponse, checkOuiNon, getNewToken, storeToken, callAppsScript, prostFormulaire } = require('./google.js')
-
+// const { processForm, sendResponse, checkOuiNon, getNewToken, storeToken, callAppsScript, prostFormulaire } = require('./google.js')
+var processForm = require('./google.js').processForm;
+var sendResponse = require('./google.js').sendResponse;
+var checkOuiNon = require('./google.js').checkOuiNon;
+var getNewToken = require('./google.js').getNewToken;
+var storeToken = require('./google.js').storeToken;
+var callAppsScript = require('./google.js').callAppsScript;
+var prostFormulaire = require('./google.js').prostFormulaire;
 // If modifying these scopes, delete your previously saved credentials
 // at ~/.credentials/script-nodejs-quickstart.json
 var SCOPES = ['https://www.googleapis.com/auth/forms', 'https://www.googleapis.com/auth/cloud-platform', 'https://www.googleapis.com/auth/drive', 'https://www.googleapis.com/auth/servicecontrol', 'https://www.googleapis.com/auth/service.management'];
