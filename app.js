@@ -7,6 +7,7 @@ var googleAuth = require('google-auth-library');
 const https = require('https');
 const WebSocket = require('ws');
 
+// ID FORMULAIRE
 var reference;
 
 /*
@@ -44,6 +45,8 @@ function IsJsonString(str) {
     return true;
 }
 
+
+// SOCKET FOR DIASUITE INFORMATION
 function sockcom(req) {
     return new Promise((resolve, reject) => {
         var ping;
@@ -86,6 +89,8 @@ function sockcom(req) {
     })
 }
 
+
+// SOCKET WHICH LISTENS EVERYMOMENT FOR THE FORM ID
 function socklisten() {
     var ping;
     var diaData = {
