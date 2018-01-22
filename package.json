@@ -14,7 +14,6 @@
     "https": "^1.0.0",
     "oauth": "0.9.10",
     "package.json": "^2.0.1",
-    "ssl-root-cas": "^1.2.4",
     "ws": "^4.0.0"
   },
   "optionalDependencies": {
