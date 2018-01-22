@@ -1,3 +1,9 @@
+const WebSocket = require('ws');
+
+const diaSock = 'wss://appartement:appartement@diasuitebox-jvm2.bordeaux.inria.fr:443/userbox/ws?keepalive=client';
+const clientName = 'googlehome';
+const pingInterval = 45000;
+const pingValue = 'PING:';
 
 function IsJsonString(str) {
     try {
@@ -113,5 +119,6 @@ function socklisten() {
     });
 }
 
+module.exports.sockcom = sockcom;
+module.exports.socklisten = socklisten;
 
-export { sockcom, socklisten, IsJsonString}
