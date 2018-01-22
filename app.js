@@ -4,11 +4,11 @@ var google = require('googleapis');
 var googleAuth = require('google-auth-library');
 
 // WEBSOCKET
-const {sockcom, socklisten} = require('./sockets.js');
+const { sockcom, socklisten } = require('./sockets.js');
 const clientName = 'googlehome';
 
 // GOOGLE
-const  {processForm, sendResponse, checkOuiNon, getNewToken, storeToken, callAppsScript, prostFormulaire} = require('./google.js')
+const { processForm, sendResponse, checkOuiNon, getNewToken, storeToken, callAppsScript, prostFormulaire } = require('./google.js')
 
 // If modifying these scopes, delete your previously saved credentials
 // at ~/.credentials/script-nodejs-quickstart.json
@@ -165,12 +165,12 @@ app.post('/api', function (req, response) {
             console.log(err);
         });
     } else if (~query.indexOf("merci")) { //CASE OF DISCUSSION
-      response.send(JSON.parse('{ "speech": "Je suis ravi de vous avoir aidé. Avez vous d\'autres questions ?", "displayText": "Je suis ravi de vous avoir aidé. Avez vous d\'autres questions ?"}'));
+        response.send(JSON.parse('{ "speech": "Je suis ravi de vous avoir aidé. Avez vous d\'autres questions ?", "displayText": "Je suis ravi de vous avoir aidé. Avez vous d\'autres questions ?"}'));
     } else if (~query.indexOf("quit") || ~query.indexOf("termin")) { //CASE OF DISCUSSION
-      response.send(JSON.parse('{ "speech": "Je vous souhaite une agréable journé !", "displayText": "Je vous souhaite une agréable journé !", "data": { "google": {"expect_user_response": false}}}'));
+        response.send(JSON.parse('{ "speech": "Je vous souhaite une agréable journé !", "displayText": "Je vous souhaite une agréable journé !", "data": { "google": {"expect_user_response": false}}}'));
     } else {
-      response.send(JSON.parse('{ "speech": "Je n\'ai pas compris. Pouvez vous reformuler votre demande ?", "displayText": "Je n\'ai pas compris. Pouvez vous reformuler votre demande ?"}'));
-}
+        response.send(JSON.parse('{ "speech": "Je n\'ai pas compris. Pouvez vous reformuler votre demande ?", "displayText": "Je n\'ai pas compris. Pouvez vous reformuler votre demande ?"}'));
+    }
 });
 
 // response.send(JSON.parse('{ "speech": "Formulaire terminé", "displayText": "formualire terminé", "data": { "google": {"expect_user_response": false}}}'));

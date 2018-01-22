@@ -119,6 +119,8 @@ function socklisten() {
     });
 }
 
-module.exports.sockcom = sockcom;
-module.exports.socklisten = socklisten;
+module.exports = {
+    sockcom: sockcom,
+    socklisten: socklisten
+}
 
